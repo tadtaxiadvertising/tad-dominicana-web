@@ -24,8 +24,6 @@
     <div id="root"></div>
     
     <script type="text/babel">
-        const { useState } = React;
-        
         // Google Apps Script URL
         const scriptURL = "https://script.google.com/macros/s/AKfycbyF5Sk3R51l0J3bP5lgM2_MV6Qs47Wo-a8wQFme5cBpaNUnlH85h5Z37P6_2fXZRDVh/exec";
         const whatsappPhone = "18495043872";
@@ -39,30 +37,9 @@
             </svg>
         );
 
-        // Main App
-        function App() {
-            const [view, setView] = useState('landing');
-            const [formData, setFormData] = useState({
-                nombre: '',
-                apellido: '',
-                cedula: '',
-                telefono: '',
-                marca: '',
-                modelo: '',
-                ano: '',
-                placa: '',
-                aceptaContrato: false
-            });
-            const [step, setStep] = useState(1);
-            const [loading, setLoading] = useState(false);
-            const [submitted, setSubmitted] = useState(false);
-
-            const handleInputChange = (field, value) => {
-                setFormData(prev => ({ ...prev, [field]: value }));
-            };
-
-            // Landing Page
-            const LandingPage = () => (
+        // Landing Page Component
+        function LandingPage({ onNavigate }) {
+            return (
                 <div className="min-h-screen">
                     <header className="bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,7 +50,7 @@
                                     <a href="#ganancias" className="text-gray-300 hover:text-yellow-400 transition">Ganancias</a>
                                     <a href="#beneficios" className="text-gray-300 hover:text-yellow-400 transition">Beneficios</a>
                                 </nav>
-                                <button onClick={() => setView('register')} className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full transition transform hover:scale-105">
+                                <button onClick={() => onNavigate('register')} className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full transition transform hover:scale-105">
                                     Comenzar a Ganar
                                 </button>
                             </div>
@@ -89,10 +66,10 @@
                                 Gana dinero extra mientras conduces. Instalamos tablets de 10" para entretener a tus pasajeros y generar ingresos por publicidad.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
-                                <button onClick={() => setView('register')} className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition transform hover:scale-105">
+                                <button onClick={() => onNavigate('register')} className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition transform hover:scale-105">
                                     ¡Quiero Unirme!
                                 </button>
-                                <button onClick={() => setView('calculator')} className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-4 px-8 rounded-full text-lg transition">
+                                <button onClick={() => onNavigate('calculator')} className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-4 px-8 rounded-full text-lg transition">
                                     Calcula Tus Ganancias
                                 </button>
                             </div>
@@ -144,7 +121,7 @@
                         <div className="max-w-4xl mx-auto text-center px-4">
                             <h2 className="text-4xl font-bold text-black mb-4">¿Listo para Comenzar?</h2>
                             <p className="text-xl text-black/80 mb-8">Únete a TAD Dominicana y comienza a generar ingresos extra hoy mismo</p>
-                            <button onClick={() => setView('register')} className="bg-black hover:bg-gray-800 text-yellow-400 font-bold py-4 px-12 rounded-full text-lg transition transform hover:scale-105">
+                            <button onClick={() => onNavigate('register')} className="bg-black hover:bg-gray-800 text-yellow-400 font-bold py-4 px-12 rounded-full text-lg transition transform hover:scale-105">
                                 Registrarme Ahora
                             </button>
                         </div>
@@ -157,247 +134,276 @@
                     </footer>
                 </div>
             );
+        }
 
-            // Calculator Page
-            const CalculatorPage = () => {
-                const [ads, setAds] = useState(5);
-                const [referrals, setReferrals] = useState(0);
-                const earnings = (ads * 500) + (referrals * 500);
-                
-                return (
-                    <div className="min-h-screen pt-20 px-4">
-                        <div className="max-w-2xl mx-auto">
-                            <button onClick={() => setView('landing')} className="text-gray-400 hover:text-white mb-8">← Volver</button>
-                            <h1 className="text-4xl font-bold mb-8">Calculadora de Ganancias</h1>
-                            
-                            <div className="bg-gray-800 p-8 rounded-xl">
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium mb-2">Anuncios en tu vehículo: {ads}</label>
-                                    <input 
-                                        type="range" 
-                                        min="1" 
-                                        max="15" 
-                                        value={ads} 
-                                        onChange={(e) => setAds(Number(e.target.value))} 
-                                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
-                                    />
-                                    <p className="text-gray-400 text-sm mt-2">Máximo 15 anuncios simultáneos</p>
-                                </div>
-                                
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium mb-2">Conductores referidos: {referrals}</label>
-                                    <input 
-                                        type="range" 
-                                        min="0" 
-                                        max="20" 
-                                        value={referrals} 
-                                        onChange={(e) => setReferrals(Number(e.target.value))} 
-                                        className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
-                                    />
-                                    <p className="text-gray-400 text-sm mt-2">Gana RD$500 por cada referido</p>
-                                </div>
-                                
-                                <div className="border-t border-gray-700 pt-6">
-                                    <p className="text-gray-400 mb-2">Ganancia Mensual Estimada</p>
-                                    <p className="text-5xl font-bold text-yellow-400">RD$ {earnings.toLocaleString()}</p>
-                                </div>
-                                
-                                <button onClick={() => setView('register')} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-full mt-6 transition">
-                                    ¡Quiero Ganar Esto!
-                                </button>
+        // Calculator Page Component
+        function CalculatorPage({ onNavigate }) {
+            const [ads, setAds] = React.useState(5);
+            const [referrals, setReferrals] = React.useState(0);
+            const earnings = (ads * 500) + (referrals * 500);
+            
+            return (
+                <div className="min-h-screen pt-20 px-4">
+                    <div className="max-w-2xl mx-auto">
+                        <button onClick={() => onNavigate('landing')} className="text-gray-400 hover:text-white mb-8">← Volver</button>
+                        <h1 className="text-4xl font-bold mb-8">Calculadora de Ganancias</h1>
+                        
+                        <div className="bg-gray-800 p-8 rounded-xl">
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium mb-2">Anuncios en tu vehículo: {ads}</label>
+                                <input 
+                                    type="range" 
+                                    min="1" 
+                                    max="15" 
+                                    value={ads} 
+                                    onChange={(e) => setAds(Number(e.target.value))} 
+                                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                                />
+                                <p className="text-gray-400 text-sm mt-2">Máximo 15 anuncios simultáneos</p>
                             </div>
+                            
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium mb-2">Conductores referidos: {referrals}</label>
+                                <input 
+                                    type="range" 
+                                    min="0" 
+                                    max="100" 
+                                    value={referrals} 
+                                    onChange={(e) => setReferrals(Number(e.target.value))} 
+                                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" 
+                                />
+                                <p className="text-gray-400 text-sm mt-2">Gana RD$500 por cada referido (hasta 100)</p>
+                            </div>
+                            
+                            <div className="border-t border-gray-700 pt-6">
+                                <p className="text-gray-400 mb-2">Ganancia Mensual Estimada</p>
+                                <p className="text-5xl font-bold text-yellow-400">RD$ {earnings.toLocaleString()}</p>
+                                <p className="text-gray-400 text-sm mt-2">
+                                    RD$ {ads * 500} (anuncios) + RD$ {referrals * 500} (referidos)
+                                </p>
+                            </div>
+                            
+                            <button onClick={() => onNavigate('register')} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-full mt-6 transition">
+                                ¡Quiero Ganar Esto!
+                            </button>
                         </div>
                     </div>
-                );
-            };
+                </div>
+            );
+        }
 
-            // Register Page
-            const RegisterPage = () => {
-                if (submitted) {
-                    return (
-                        <div className="min-h-screen flex items-center justify-center px-4">
-                            <div className="text-center">
-                                <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                </div>
-                                <h1 className="text-3xl font-bold mb-4">¡Registro Exitoso!</h1>
-                                <p className="text-gray-400 mb-8">Te redirigiremos a WhatsApp para completar tu registro</p>
-                                <a 
-                                    href={`https://wa.me/${whatsappPhone}?text=Hola!%20Acabo%20de%20completar%20mi%20registro%20en%20TAD%20Dominicana`} 
-                                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition inline-block"
-                                    target="_blank"
-                                >
-                                    Ir a WhatsApp →
-                                </a>
-                            </div>
-                        </div>
-                    );
+        // Register Page Component
+        function RegisterPage({ onNavigate }) {
+            const [formData, setFormData] = React.useState({
+                nombre: '',
+                apellido: '',
+                cedula: '',
+                telefono: '',
+                marca: '',
+                modelo: '',
+                ano: '',
+                placa: '',
+                aceptaContrato: false
+            });
+            const [step, setStep] = React.useState(1);
+            const [loading, setLoading] = React.useState(false);
+            const [submitted, setSubmitted] = React.useState(false);
+
+            const handleInputChange = React.useCallback((field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            }, []);
+
+            const nextStep = React.useCallback(() => {
+                if (step === 1) {
+                    if (!formData.nombre || !formData.apellido || !formData.cedula || !formData.telefono) {
+                        alert('Por favor completa todos los campos');
+                        return;
+                    }
                 }
-
-                const handleSubmit = async (e) => {
-                    e.preventDefault();
-                    setLoading(true);
-                    
-                    try {
-                        const response = await fetch(scriptURL, {
-                            method: 'POST',
-                            mode: 'no-cors',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({
-                                ...formData,
-                                fecha: new Date().toISOString()
-                            })
-                        });
-                        setSubmitted(true);
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Error al enviar. Intenta de nuevo.');
+                if (step === 2) {
+                    if (!formData.marca || !formData.modelo || !formData.ano || !formData.placa) {
+                        alert('Por favor completa todos los campos');
+                        return;
                     }
-                    setLoading(false);
-                };
+                }
+                setStep(prev => prev + 1);
+            }, [step, formData]);
 
-                const nextStep = () => {
-                    // Validar step actual
-                    if (step === 1) {
-                        if (!formData.nombre || !formData.apellido || !formData.cedula || !formData.telefono) {
-                            alert('Por favor completa todos los campos');
-                            return;
-                        }
-                    }
-                    if (step === 2) {
-                        if (!formData.marca || !formData.modelo || !formData.ano || !formData.placa) {
-                            alert('Por favor completa todos los campos');
-                            return;
-                        }
-                    }
-                    setStep(step + 1);
-                };
+            const handleSubmit = React.useCallback(async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                
+                try {
+                    await fetch(scriptURL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            ...formData,
+                            fecha: new Date().toISOString()
+                        })
+                    });
+                    setSubmitted(true);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al enviar. Intenta de nuevo.');
+                }
+                setLoading(false);
+            }, [formData]);
 
+            if (submitted) {
                 return (
-                    <div className="min-h-screen pt-20 px-4">
-                        <div className="max-w-2xl mx-auto">
-                            <button onClick={() => setView('landing')} className="text-gray-400 hover:text-white mb-8">← Volver</button>
-                            
-                            {/* Progress */}
-                            <div className="flex justify-between mb-8">
-                                {[1, 2, 3].map(i => (
-                                    <div key={i} className={`flex-1 h-2 mx-2 rounded ${step >= i ? 'bg-yellow-500' : 'bg-gray-700'}`}></div>
-                                ))}
+                    <div className="min-h-screen flex items-center justify-center px-4">
+                        <div className="text-center">
+                            <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
                             </div>
-                            
-                            <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded-xl">
-                                {step === 1 && (
-                                    <div>
-                                        <h2 className="text-2xl font-bold mb-6">Datos Personales</h2>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Nombre" 
-                                            value={formData.nombre}
-                                            onChange={(e) => handleInputChange('nombre', e.target.value)}
-                                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
-                                        />
-                                        <input 
-                                            type="text" 
-                                            placeholder="Apellido" 
-                                            value={formData.apellido}
-                                            onChange={(e) => handleInputChange('apellido', e.target.value)}
-                                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
-                                        />
-                                        <input 
-                                            type="text" 
-                                            placeholder="Cédula" 
-                                            value={formData.cedula}
-                                            onChange={(e) => handleInputChange('cedula', e.target.value)}
-                                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
-                                        />
-                                        <input 
-                                            type="tel" 
-                                            placeholder="Teléfono" 
-                                            value={formData.telefono}
-                                            onChange={(e) => handleInputChange('telefono', e.target.value)}
-                                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" 
-                                        />
-                                        <button type="button" onClick={nextStep} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
-                                    </div>
-                                )}
-                                
-                                {step === 2 && (
-                                    <div>
-                                        <h2 className="text-2xl font-bold mb-6">Datos del Vehículo</h2>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Marca" 
-                                            value={formData.marca}
-                                            onChange={(e) => handleInputChange('marca', e.target.value)}
-                                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
-                                        />
-                                        <input 
-                                            type="text" 
-                                            placeholder="Modelo" 
-                                            value={formData.modelo}
-                                            onChange={(e) => handleInputChange('modelo', e.target.value)}
-                                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
-                                        />
-                                        <input 
-                                            type="number" 
-                                            placeholder="Año" 
-                                            value={formData.ano}
-                                            onChange={(e) => handleInputChange('ano', e.target.value)}
-                                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
-                                        />
-                                        <input 
-                                            type="text" 
-                                            placeholder="Placa" 
-                                            value={formData.placa}
-                                            onChange={(e) => handleInputChange('placa', e.target.value)}
-                                            className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" 
-                                        />
-                                        <button type="button" onClick={nextStep} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
-                                    </div>
-                                )}
-                                
-                                {step === 3 && (
-                                    <div>
-                                        <h2 className="text-2xl font-bold mb-6">Contrato</h2>
-                                        <div className="bg-gray-900 p-4 rounded-lg h-48 overflow-y-scroll mb-6 text-sm text-gray-300">
-                                            <p className="mb-4"><strong>CONTRATO DE COLABORACIÓN MERCANTIL</strong></p>
-                                            <p>Por este documento, TAD Dominicana, S.R.L. y el conductor acuerdan:</p>
-                                            <ul className="list-disc pl-5 mt-2 space-y-1">
-                                                <li>El conductor permite instalación de tablet publicitaria</li>
-                                                <li>Suscripción anual: RD$6,000 (tablet en comodato)</li>
-                                                <li>Comisión: RD$500 por anuncio activo/mes</li>
-                                                <li>No existe relación laboral</li>
-                                                <li>Sin exclusividad (puede trabajar con Uber, DiDi, etc.)</li>
-                                            </ul>
-                                        </div>
-                                        <label className="flex items-center mb-6">
-                                            <input 
-                                                type="checkbox" 
-                                                checked={formData.aceptaContrato}
-                                                onChange={(e) => handleInputChange('aceptaContrato', e.target.checked)}
-                                                className="w-5 h-5 text-yellow-500 rounded focus:ring-yellow-500" 
-                                            />
-                                            <span className="ml-2 text-gray-300">Acepto los términos del contrato</span>
-                                        </label>
-                                        <button 
-                                            type="submit" 
-                                            disabled={loading || !formData.aceptaContrato} 
-                                            className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {loading ? 'Enviando...' : 'Completar Registro'}
-                                        </button>
-                                    </div>
-                                )}
-                            </form>
+                            <h1 className="text-3xl font-bold mb-4">¡Registro Exitoso!</h1>
+                            <p className="text-gray-400 mb-8">Te redirigiremos a WhatsApp para completar tu registro</p>
+                            <a 
+                                href={`https://wa.me/${whatsappPhone}?text=Hola!%20Acabo%20de%20completar%20mi%20registro%20en%20TAD%20Dominicana`} 
+                                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition inline-block"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Ir a WhatsApp →
+                            </a>
                         </div>
                     </div>
                 );
-            };
+            }
 
-            // Render current view
-            return view === 'landing' ? <LandingPage /> : view === 'calculator' ? <CalculatorPage /> : <RegisterPage />;
+            return (
+                <div className="min-h-screen pt-20 px-4">
+                    <div className="max-w-2xl mx-auto">
+                        <button onClick={() => onNavigate('landing')} className="text-gray-400 hover:text-white mb-8">← Volver</button>
+                        
+                        <div className="flex justify-between mb-8">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className={`flex-1 h-2 mx-2 rounded ${step >= i ? 'bg-yellow-500' : 'bg-gray-700'}`}></div>
+                            ))}
+                        </div>
+                        
+                        <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded-xl">
+                            {step === 1 && (
+                                <div>
+                                    <h2 className="text-2xl font-bold mb-6">Datos Personales</h2>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Nombre" 
+                                        value={formData.nombre}
+                                        onChange={(e) => handleInputChange('nombre', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Apellido" 
+                                        value={formData.apellido}
+                                        onChange={(e) => handleInputChange('apellido', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Cédula" 
+                                        value={formData.cedula}
+                                        onChange={(e) => handleInputChange('cedula', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <input 
+                                        type="tel" 
+                                        placeholder="Teléfono" 
+                                        value={formData.telefono}
+                                        onChange={(e) => handleInputChange('telefono', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <button type="button" onClick={nextStep} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
+                                </div>
+                            )}
+                            
+                            {step === 2 && (
+                                <div>
+                                    <h2 className="text-2xl font-bold mb-6">Datos del Vehículo</h2>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Marca" 
+                                        value={formData.marca}
+                                        onChange={(e) => handleInputChange('marca', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Modelo" 
+                                        value={formData.modelo}
+                                        onChange={(e) => handleInputChange('modelo', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <input 
+                                        type="number" 
+                                        placeholder="Año" 
+                                        value={formData.ano}
+                                        onChange={(e) => handleInputChange('ano', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Placa" 
+                                        value={formData.placa}
+                                        onChange={(e) => handleInputChange('placa', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <button type="button" onClick={nextStep} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
+                                </div>
+                            )}
+                            
+                            {step === 3 && (
+                                <div>
+                                    <h2 className="text-2xl font-bold mb-6">Contrato</h2>
+                                    <div className="bg-gray-900 p-4 rounded-lg h-48 overflow-y-scroll mb-6 text-sm text-gray-300">
+                                        <p className="mb-4"><strong>CONTRATO DE COLABORACIÓN MERCANTIL</strong></p>
+                                        <p>Por este documento, TAD Dominicana, S.R.L. y el conductor acuerdan:</p>
+                                        <ul className="list-disc pl-5 mt-2 space-y-1">
+                                            <li>El conductor permite instalación de tablet publicitaria</li>
+                                            <li>Suscripción anual: RD$6,000 (tablet en comodato)</li>
+                                            <li>Comisión: RD$500 por anuncio activo/mes</li>
+                                            <li>No existe relación laboral</li>
+                                            <li>Sin exclusividad (puede trabajar con Uber, DiDi, etc.)</li>
+                                        </ul>
+                                    </div>
+                                    <label className="flex items-center mb-6">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={formData.aceptaContrato}
+                                            onChange={(e) => handleInputChange('aceptaContrato', e.target.checked)}
+                                            className="w-5 h-5 text-yellow-500 rounded focus:ring-yellow-500" 
+                                        />
+                                        <span className="ml-2 text-gray-300">Acepto los términos del contrato</span>
+                                    </label>
+                                    <button 
+                                        type="submit" 
+                                        disabled={loading || !formData.aceptaContrato} 
+                                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {loading ? 'Enviando...' : 'Completar Registro'}
+                                    </button>
+                                </div>
+                            )}
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
+        // Main App Component
+        function App() {
+            const [view, setView] = React.useState('landing');
+
+            return view === 'landing' 
+                ? <LandingPage onNavigate={setView} /> 
+                : view === 'calculator' 
+                    ? <CalculatorPage onNavigate={setView} /> 
+                    : <RegisterPage onNavigate={setView} />;
         }
 
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
