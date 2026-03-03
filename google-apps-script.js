@@ -31,13 +31,13 @@ function doPost(e) {
       getValue(payload, ['ano', 'año']),                // H: Año
       getValue(payload, ['placa']),                     // I: Placa
       getValue(payload, ['plataformas', 'plataforma']), // J: Plataformas
-      getValue(payload, ['horasDiarias']),              // K: Horas por día
-      getValue(payload, ['diasSemana']),                // L: Días por semana
+      getValue(payload, ['horasDiarias', 'horas_diarias', 'horas_por_dia']), // K: Horas por día
+      getValue(payload, ['diasSemana', 'dias_semana', 'dias_por_semana']), // L: Días por semana
       getValue(payload, ['ciudad']),                    // M: Ciudad
       getValue(payload, ['horario']),                   // N: Horario
-      getValue(payload, ['tieneTablet']),               // O: ¿Tiene tablet?
-      getValue(payload, ['experienciaVentas']),         // P: Experiencia en ventas
-      getValue(payload, ['aplicacion'], 'Web')          // Q: Aplicación
+      getValue(payload, ['tieneTablet', 'tiene_tablet']), // O: ¿Tiene tablet?
+      getValue(payload, ['experienciaVentas', 'experiencia_ventas']), // P: Experiencia en ventas
+      getValue(payload, ['aplicacion', 'aplicación'], 'Web') // Q: Aplicación
     ];
 
     sheet.appendRow(rowData);
@@ -62,6 +62,14 @@ function parsePayload(e) {
 
   if (e.parameter) {
     merged = Object.assign(merged, e.parameter);
+  }
+
+  if (e.parameters) {
+    for (var key in e.parameters) {
+      if (e.parameters.hasOwnProperty(key) && e.parameters[key] && e.parameters[key].length) {
+        merged[key] = e.parameters[key][0];
+      }
+    }
   }
 
   if (e.postData && e.postData.contents) {

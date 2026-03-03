@@ -252,18 +252,47 @@ function RegisterView({ navigateTo }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const requiredFieldsByStep = {
+    1: ['nombre', 'apellido', 'cedula', 'telefono'],
+    2: ['marca', 'modelo', 'ano', 'placa', 'plataformas', 'horasDiarias', 'diasSemana', 'ciudad', 'horario', 'tieneTablet', 'experienciaVentas'],
+  };
+
+  const stepHasMissingFields = (stepNumber) => {
+    var fields = requiredFieldsByStep[stepNumber] || [];
+    return fields.some((field) => !String(formData[field] || '').trim());
+  };
+
+  const goToNextStep = () => {
+    if (stepHasMissingFields(step)) {
+      setSubmitMessage('Completa todas las preguntas de este paso para continuar.');
+      return;
+    }
+
+    setSubmitMessage('');
+    setStep((s) => Math.min(3, s + 1));
+  };
+
   const submitRegister = async () => {
     setSubmitMessage('');
     setIsSubmitting(true);
 
     try {
+      const payload = {
+        ...formData,
+        plataforma: formData.plataformas,
+        horas_por_dia: formData.horasDiarias,
+        dias_por_semana: formData.diasSemana,
+        tiene_tablet: formData.tieneTablet,
+        experiencia_ventas: formData.experienciaVentas,
+      };
+
       await fetch(scriptURL, {
         method: 'POST',
         mode: 'no-cors',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         },
-        body: new URLSearchParams(formData).toString(),
+        body: new URLSearchParams(payload).toString(),
       });
 
       setSubmitMessage('Registro enviado correctamente.');
@@ -302,12 +331,34 @@ function RegisterView({ navigateTo }) {
             <input name="modelo" value={formData.modelo} onChange={updateField} placeholder="Modelo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="ano" value={formData.ano} onChange={updateField} placeholder="Año" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="placa" value={formData.placa} onChange={updateField} placeholder="Placa" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
-            <label className="block">¿En qué plataforma(s) trabajas?</label>
-            <input name="plataformas" value={formData.plataformas} onChange={updateField} placeholder="Uber, InDrive, DiDi..." className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
-            <input name="horasDiarias" value={formData.horasDiarias} onChange={updateField} placeholder="Horas por día" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
-            <input name="diasSemana" value={formData.diasSemana} onChange={updateField} placeholder="Días por semana" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
-            <input name="ciudad" value={formData.ciudad} onChange={updateField} placeholder="Ciudad" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
-            <input name="horario" value={formData.horario} onChange={updateField} placeholder="Horario habitual" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <label className="block text-sm text-gray-300">¿En qué plataforma(s) trabajas actualmente?</label>
+            <input name="plataformas" value={formData.plataformas} onChange={updateField} placeholder="Ej: Uber, InDrive, DiDi" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <label className="block text-sm text-gray-300">¿Cuántas horas conduces por día?</label>
+            <select name="horasDiarias" value={formData.horasDiarias} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona un rango</option>
+              <option value="1-4">1 a 4 horas</option>
+              <option value="5-8">5 a 8 horas</option>
+              <option value="9-12">9 a 12 horas</option>
+              <option value="12+">Más de 12 horas</option>
+            </select>
+            <label className="block text-sm text-gray-300">¿Cuántos días trabajas por semana?</label>
+            <select name="diasSemana" value={formData.diasSemana} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona una opción</option>
+              <option value="1-3">1 a 3 días</option>
+              <option value="4-5">4 a 5 días</option>
+              <option value="6">6 días</option>
+              <option value="7">7 días</option>
+            </select>
+            <label className="block text-sm text-gray-300">¿En qué ciudad operas principalmente?</label>
+            <input name="ciudad" value={formData.ciudad} onChange={updateField} placeholder="Ej: Santo Domingo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <label className="block text-sm text-gray-300">¿Cuál es tu horario más frecuente?</label>
+            <select name="horario" value={formData.horario} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona un horario</option>
+              <option value="Mañana">Mañana</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Noche">Noche</option>
+              <option value="Mixto">Mixto</option>
+            </select>
             <label className="block">¿Tiene tablet?</label>
             <select name="tieneTablet" value={formData.tieneTablet} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
               <option value="">Selecciona una opción</option>
@@ -334,6 +385,13 @@ function RegisterView({ navigateTo }) {
               <p><strong>Vehículo:</strong> {formData.marca} {formData.modelo} ({formData.ano})</p>
               <p><strong>Placa:</strong> {formData.placa}</p>
               <p><strong>Plataformas:</strong> {formData.plataformas}</p>
+              <p><strong>Horas por día:</strong> {formData.horasDiarias}</p>
+              <p><strong>Días por semana:</strong> {formData.diasSemana}</p>
+              <p><strong>Ciudad:</strong> {formData.ciudad}</p>
+              <p><strong>Horario:</strong> {formData.horario}</p>
+              <p><strong>¿Tiene tablet?:</strong> {formData.tieneTablet}</p>
+              <p><strong>Experiencia en ventas:</strong> {formData.experienciaVentas}</p>
+              <p><strong>Aplicación:</strong> {formData.aplicacion}</p>
             </div>
             {submitMessage && <p className="mt-3 text-sm text-[#FFC107]">{submitMessage}</p>}
             <button onClick={submitRegister} disabled={isSubmitting} className="mt-4 bg-[#FFC107] text-gray-900 px-6 py-3 rounded-xl font-bold disabled:opacity-50">
@@ -344,7 +402,7 @@ function RegisterView({ navigateTo }) {
 
         <div className="mt-8 flex justify-between">
           <button onClick={() => setStep((s) => Math.max(1, s - 1))} className="px-4 py-2 text-gray-300" disabled={step === 1}>Atrás</button>
-          <button onClick={() => setStep((s) => Math.min(3, s + 1))} className="px-6 py-3 rounded-xl bg-[#FFC107] text-gray-900 font-bold" disabled={step === 3}>Siguiente</button>
+          <button onClick={goToNextStep} className="px-6 py-3 rounded-xl bg-[#FFC107] text-gray-900 font-bold disabled:opacity-50" disabled={step === 3 || stepHasMissingFields(step)}>Siguiente</button>
         </div>
       </div>
     </div>
