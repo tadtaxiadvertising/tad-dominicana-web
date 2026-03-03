@@ -49,18 +49,18 @@
 
             // Landing Page
             const LandingPage = () => (
-                <div class="min-h-screen">
+                <div className="min-h-screen">
                     {/* Header */}
-                    <header class="bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50">
-                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div class="flex justify-between items-center py-4">
+                    <header className="bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center py-4">
                                 <LogoTAD />
-                                <nav class="hidden md:flex space-x-8">
-                                    <a href="#como-funciona" class="text-gray-300 hover:text-yellow-400 transition">Cómo Funciona</a>
-                                    <a href="#ganancias" class="text-gray-300 hover:text-yellow-400 transition">Ganancias</a>
-                                    <a href="#beneficios" class="text-gray-300 hover:text-yellow-400 transition">Beneficios</a>
+                                <nav className="hidden md:flex space-x-8">
+                                    <a href="#como-funciona" className="text-gray-300 hover:text-yellow-400 transition">Cómo Funciona</a>
+                                    <a href="#ganancias" className="text-gray-300 hover:text-yellow-400 transition">Ganancias</a>
+                                    <a href="#beneficios" className="text-gray-300 hover:text-yellow-400 transition">Beneficios</a>
                                 </nav>
-                                <button onClick={() => setView('register')} class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full transition transform hover:scale-105">
+                                <button onClick={() => setView('register')} className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full transition transform hover:scale-105">
                                     Comenzar a Ganar
                                 </button>
                             </div>
@@ -68,19 +68,19 @@
                     </header>
 
                     {/* Hero */}
-                    <section class="relative py-20 px-4 overflow-hidden">
-                        <div class="max-w-7xl mx-auto text-center">
-                            <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-                                Tu Vehículo, Tu <span class="text-yellow-400">Valla Digital</span>
+                    <section className="relative py-20 px-4 overflow-hidden">
+                        <div className="max-w-7xl mx-auto text-center">
+                            <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
+                                Tu Vehículo, Tu <span className="text-yellow-400">Valla Digital</span>
                             </h1>
-                            <p class="text-xl text-gray-400 mb-8 max-w-3xl mx-auto animate-fade-in delay-100">
+                            <p className="text-xl text-gray-400 mb-8 max-w-3xl mx-auto animate-fade-in delay-100">
                                 Gana dinero extra mientras conduces. Instalamos tablets de 10" para entretener a tus pasajeros y generar ingresos por publicidad.
                             </p>
-                            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
-                                <button onClick={() => setView('register')} class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition transform hover:scale-105">
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in delay-200">
+                                <button onClick={() => setView('register')} className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-full text-lg transition transform hover:scale-105">
                                     ¡Quiero Unirme!
                                 </button>
-                                <button onClick={() => setView('calculator')} class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-4 px-8 rounded-full text-lg transition">
+                                <button onClick={() => setView('calculator')} className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-4 px-8 rounded-full text-lg transition">
                                     Calcula Tus Ganancias
                                 </button>
                             </div>
@@ -88,62 +88,62 @@
                     </section>
 
                     {/* Cómo Funciona */}
-                    <section id="como-funciona" class="py-20 bg-gray-800">
-                        <div class="max-w-7xl mx-auto px-4">
-                            <h2 class="text-4xl font-bold text-center mb-12">¿Cómo Funciona?</h2>
-                            <div class="grid md:grid-cols-3 gap-8">
-                                <div class="text-center p-6 bg-gray-900 rounded-xl">
-                                    <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">1</div>
-                                    <h3 class="text-xl font-bold mb-2">Regístrate</h3>
-                                    <p class="text-gray-400">Completa tu registro en 3 pasos simples</p>
+                    <section id="como-funciona" className="py-20 bg-gray-800">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <h2 className="text-4xl font-bold text-center mb-12">¿Cómo Funciona?</h2>
+                            <div className="grid md:grid-cols-3 gap-8">
+                                <div className="text-center p-6 bg-gray-900 rounded-xl">
+                                    <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">1</div>
+                                    <h3 className="text-xl font-bold mb-2">Regístrate</h3>
+                                    <p className="text-gray-400">Completa tu registro en 3 pasos simples</p>
                                 </div>
-                                <div class="text-center p-6 bg-gray-900 rounded-xl">
-                                    <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">2</div>
-                                    <h3 class="text-xl font-bold mb-2">Instalamos</h3>
-                                    <p class="text-gray-400">Coordinamos la instalación de la tablet en tu vehículo</p>
+                                <div className="text-center p-6 bg-gray-900 rounded-xl">
+                                    <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">2</div>
+                                    <h3 className="text-xl font-bold mb-2">Instalamos</h3>
+                                    <p className="text-gray-400">Coordinamos la instalación de la tablet en tu vehículo</p>
                                 </div>
-                                <div class="text-center p-6 bg-gray-900 rounded-xl">
-                                    <div class="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">3</div>
-                                    <h3 class="text-xl font-bold mb-2">Gana</h3>
-                                    <p class="text-gray-400">Recibe RD$500 por cada anuncio activo mensualmente</p>
+                                <div className="text-center p-6 bg-gray-900 rounded-xl">
+                                    <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">3</div>
+                                    <h3 className="text-xl font-bold mb-2">Gana</h3>
+                                    <p className="text-gray-400">Recibe RD$500 por cada anuncio activo mensualmente</p>
                                 </div>
                             </div>
                         </div>
                     </section>
 
                     {/* Ganancias */}
-                    <section id="ganancias" class="py-20">
-                        <div class="max-w-7xl mx-auto px-4">
-                            <h2 class="text-4xl font-bold text-center mb-12">Tus Ganancias</h2>
-                            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                                <div class="bg-gray-800 p-8 rounded-xl">
-                                    <h3 class="text-2xl font-bold mb-4">Por Anuncio</h3>
-                                    <p class="text-5xl font-bold text-yellow-400 mb-2">RD$500</p>
-                                    <p class="text-gray-400">por cada anunciante al mes</p>
+                    <section id="ganancias" className="py-20">
+                        <div className="max-w-7xl mx-auto px-4">
+                            <h2 className="text-4xl font-bold text-center mb-12">Tus Ganancias</h2>
+                            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                                <div className="bg-gray-800 p-8 rounded-xl">
+                                    <h3 className="text-2xl font-bold mb-4">Por Anuncio</h3>
+                                    <p className="text-5xl font-bold text-yellow-400 mb-2">RD$500</p>
+                                    <p className="text-gray-400">por cada anunciante al mes</p>
                                 </div>
-                                <div class="bg-gray-800 p-8 rounded-xl">
-                                    <h3 class="text-2xl font-bold mb-4">Máximo Mensual</h3>
-                                    <p class="text-5xl font-bold text-yellow-400 mb-2">RD$7,500</p>
-                                    <p class="text-gray-400">con 15 anuncios activos</p>
+                                <div className="bg-gray-800 p-8 rounded-xl">
+                                    <h3 className="text-2xl font-bold mb-4">Máximo Mensual</h3>
+                                    <p className="text-5xl font-bold text-yellow-400 mb-2">RD$7,500</p>
+                                    <p className="text-gray-400">con 15 anuncios activos</p>
                                 </div>
                             </div>
                         </div>
                     </section>
 
                     {/* CTA Final */}
-                    <section class="py-20 bg-yellow-500">
-                        <div class="max-w-4xl mx-auto text-center px-4">
-                            <h2 class="text-4xl font-bold text-black mb-4">¿Listo para Comenzar?</h2>
-                            <p class="text-xl text-black/80 mb-8">Únete a TAD Dominicana y comienza a generar ingresos extra hoy mismo</p>
-                            <button onClick={() => setView('register')} class="bg-black hover:bg-gray-800 text-yellow-400 font-bold py-4 px-12 rounded-full text-lg transition transform hover:scale-105">
+                    <section className="py-20 bg-yellow-500">
+                        <div className="max-w-4xl mx-auto text-center px-4">
+                            <h2 className="text-4xl font-bold text-black mb-4">¿Listo para Comenzar?</h2>
+                            <p className="text-xl text-black/80 mb-8">Únete a TAD Dominicana y comienza a generar ingresos extra hoy mismo</p>
+                            <button onClick={() => setView('register')} className="bg-black hover:bg-gray-800 text-yellow-400 font-bold py-4 px-12 rounded-full text-lg transition transform hover:scale-105">
                                 Registrarme Ahora
                             </button>
                         </div>
                     </section>
 
                     {/* Footer */}
-                    <footer class="bg-gray-900 py-8 border-t border-gray-800">
-                        <div class="max-w-7xl mx-auto px-4 text-center text-gray-400">
+                    <footer className="bg-gray-900 py-8 border-t border-gray-800">
+                        <div className="max-w-7xl mx-auto px-4 text-center text-gray-400">
                             <p>&copy; 2026 TAD Dominicana, S.R.L. Todos los derechos reservados.</p>
                         </div>
                     </footer>
@@ -153,35 +153,35 @@
             // Calculator Page
             const CalculatorPage = () => {
                 const [ads, setAds] = useState(5);
-                const referrals, setReferrals] = useState(0);
+                const [referrals, setReferrals] = useState(0);
                 
                 const earnings = (ads * 500) + (referrals * 500);
                 
                 return (
-                    <div class="min-h-screen pt-20 px-4">
-                        <div class="max-w-2xl mx-auto">
-                            <button onClick={() => setView('landing')} class="text-gray-400 hover:text-white mb-8">← Volver</button>
-                            <h1 class="text-4xl font-bold mb-8">Calculadora de Ganancias</h1>
+                    <div className="min-h-screen pt-20 px-4">
+                        <div className="max-w-2xl mx-auto">
+                            <button onClick={() => setView('landing')} className="text-gray-400 hover:text-white mb-8">← Volver</button>
+                            <h1 className="text-4xl font-bold mb-8">Calculadora de Ganancias</h1>
                             
-                            <div class="bg-gray-800 p-8 rounded-xl">
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium mb-2">Anuncios en tu vehículo: {ads}</label>
-                                    <input type="range" min="1" max="15" value={ads} onChange={(e) => setAds(Number(e.target.value))} class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
-                                    <p class="text-gray-400 text-sm mt-2">Máximo 15 anuncios simultáneos</p>
+                            <div className="bg-gray-800 p-8 rounded-xl">
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium mb-2">Anuncios en tu vehículo: {ads}</label>
+                                    <input type="range" min="1" max="15" value={ads} onChange={(e) => setAds(Number(e.target.value))} className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
+                                    <p className="text-gray-400 text-sm mt-2">Máximo 15 anuncios simultáneos</p>
                                 </div>
                                 
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium mb-2">Conductores referidos: {referrals}</label>
-                                    <input type="range" min="0" max="20" value={referrals} onChange={(e) => setReferrals(Number(e.target.value))} class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
-                                    <p class="text-gray-400 text-sm mt-2">Gana RD$500 por cada referido</p>
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium mb-2">Conductores referidos: {referrals}</label>
+                                    <input type="range" min="0" max="20" value={referrals} onChange={(e) => setReferrals(Number(e.target.value))} className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer" />
+                                    <p className="text-gray-400 text-sm mt-2">Gana RD$500 por cada referido</p>
                                 </div>
                                 
-                                <div class="border-t border-gray-700 pt-6">
-                                    <p class="text-gray-400 mb-2">Ganancia Mensual Estimada</p>
-                                    <p class="text-5xl font-bold text-yellow-400">RD$ {earnings.toLocaleString()}</p>
+                                <div className="border-t border-gray-700 pt-6">
+                                    <p className="text-gray-400 mb-2">Ganancia Mensual Estimada</p>
+                                    <p className="text-5xl font-bold text-yellow-400">RD$ {earnings.toLocaleString()}</p>
                                 </div>
                                 
-                                <button onClick={() => setView('register')} class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-full mt-6 transition">
+                                <button onClick={() => setView('register')} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 rounded-full mt-6 transition">
                                     ¡Quiero Ganar Esto!
                                 </button>
                             </div>
@@ -194,16 +194,16 @@
             const RegisterPage = () => {
                 if (submitted) {
                     return (
-                        <div class="min-h-screen flex items-center justify-center px-4">
-                            <div class="text-center">
-                                <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        <div className="min-h-screen flex items-center justify-center px-4">
+                            <div className="text-center">
+                                <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
                                 </div>
-                                <h1 class="text-3xl font-bold mb-4">¡Registro Exitoso!</h1>
-                                <p class="text-gray-400 mb-8">Te redirigiremos a WhatsApp para completar tu registro</p>
-                                <a href={`https://wa.me/${whatsappPhone}?text=Hola!%20Acabo%20de%20completar%20mi%20registro%20en%20TAD%20Dominicana`} class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition inline-block">
+                                <h1 className="text-3xl font-bold mb-4">¡Registro Exitoso!</h1>
+                                <p className="text-gray-400 mb-8">Te redirigiremos a WhatsApp para completar tu registro</p>
+                                <a href={`https://wa.me/${whatsappPhone}?text=Hola!%20Acabo%20de%20completar%20mi%20registro%20en%20TAD%20Dominicana`} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition inline-block">
                                     Ir a WhatsApp
                                 </a>
                             </div>
@@ -230,47 +230,47 @@
                 };
 
                 return (
-                    <div class="min-h-screen pt-20 px-4">
-                        <div class="max-w-2xl mx-auto">
-                            <button onClick={() => setView('landing')} class="text-gray-400 hover:text-white mb-8">← Volver</button>
+                    <div className="min-h-screen pt-20 px-4">
+                        <div className="max-w-2xl mx-auto">
+                            <button onClick={() => setView('landing')} className="text-gray-400 hover:text-white mb-8">← Volver</button>
                             
                             {/* Progress */}
-                            <div class="flex justify-between mb-8">
+                            <div className="flex justify-between mb-8">
                                 {[1, 2, 3].map(i => (
-                                    <div key={i} class={`flex-1 h-2 mx-2 rounded ${step >= i ? 'bg-yellow-500' : 'bg-gray-700'}`}></div>
+                                    <div key={i} className={`flex-1 h-2 mx-2 rounded ${step >= i ? 'bg-yellow-500' : 'bg-gray-700'}`}></div>
                                 ))}
                             </div>
                             
-                            <form onSubmit={handleSubmit} class="bg-gray-800 p-8 rounded-xl">
+                            <form onSubmit={handleSubmit} className="bg-gray-800 p-8 rounded-xl">
                                 {step === 1 && (
                                     <div>
-                                        <h2 class="text-2xl font-bold mb-6">Datos Personales</h2>
-                                        <input required type="text" placeholder="Nombre" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, nombre: e.target.value})} />
-                                        <input required type="text" placeholder="Apellido" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, apellido: e.target.value})} />
-                                        <input required type="text" placeholder="Cédula" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, cedula: e.target.value})} />
-                                        <input required type="tel" placeholder="Teléfono" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, telefono: e.target.value})} />
-                                        <button type="button" onClick={() => setStep(2)} class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
+                                        <h2 className="text-2xl font-bold mb-6">Datos Personales</h2>
+                                        <input required type="text" placeholder="Nombre" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, nombre: e.target.value})} />
+                                        <input required type="text" placeholder="Apellido" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, apellido: e.target.value})} />
+                                        <input required type="text" placeholder="Cédula" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, cedula: e.target.value})} />
+                                        <input required type="tel" placeholder="Teléfono" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, telefono: e.target.value})} />
+                                        <button type="button" onClick={() => setStep(2)} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
                                     </div>
                                 )}
                                 
                                 {step === 2 && (
                                     <div>
-                                        <h2 class="text-2xl font-bold mb-6">Datos del Vehículo</h2>
-                                        <input required type="text" placeholder="Marca" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, marca: e.target.value})} />
-                                        <input required type="text" placeholder="Modelo" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, modelo: e.target.value})} />
-                                        <input required type="number" placeholder="Año" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, ano: e.target.value})} />
-                                        <input required type="text" placeholder="Placa" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, placa: e.target.value})} />
-                                        <button type="button" onClick={() => setStep(3)} class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
+                                        <h2 className="text-2xl font-bold mb-6">Datos del Vehículo</h2>
+                                        <input required type="text" placeholder="Marca" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, marca: e.target.value})} />
+                                        <input required type="text" placeholder="Modelo" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, modelo: e.target.value})} />
+                                        <input required type="number" placeholder="Año" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, ano: e.target.value})} />
+                                        <input required type="text" placeholder="Placa" className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" onChange={e => setFormData({...formData, placa: e.target.value})} />
+                                        <button type="button" onClick={() => setStep(3)} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
                                     </div>
                                 )}
                                 
                                 {step === 3 && (
                                     <div>
-                                        <h2 class="text-2xl font-bold mb-6">Contrato</h2>
-                                        <div class="bg-gray-900 p-4 rounded-lg h-48 overflow-y-scroll mb-6 text-sm text-gray-300">
-                                            <p class="mb-4"><strong>CONTRATO DE COLABORACIÓN MERCANTIL</strong></p>
+                                        <h2 className="text-2xl font-bold mb-6">Contrato</h2>
+                                        <div className="bg-gray-900 p-4 rounded-lg h-48 overflow-y-scroll mb-6 text-sm text-gray-300">
+                                            <p className="mb-4"><strong>CONTRATO DE COLABORACIÓN MERCANTIL</strong></p>
                                             <p>Por este documento, TAD Dominicana, S.R.L. y el conductor acuerdan:</p>
-                                            <ul class="list-disc pl-5 mt-2 space-y-1">
+                                            <ul className="list-disc pl-5 mt-2 space-y-1">
                                                 <li>El conductor permite instalación de tablet publicitaria</li>
                                                 <li>Suscripción anual: RD$6,000 (tablet en comodato)</li>
                                                 <li>Comisión: RD$500 por anuncio activo/mes</li>
@@ -278,11 +278,11 @@
                                                 <li>Sin exclusividad (puede trabajar con Uber, DiDi, etc.)</li>
                                             </ul>
                                         </div>
-                                        <label class="flex items-center mb-6">
-                                            <input required type="checkbox" class="w-5 h-5 text-yellow-500 rounded focus:ring-yellow-500" />
-                                            <span class="ml-2 text-gray-300">Acepto los términos del contrato</span>
+                                        <label className="flex items-center mb-6">
+                                            <input required type="checkbox" className="w-5 h-5 text-yellow-500 rounded focus:ring-yellow-500" />
+                                            <span className="ml-2 text-gray-300">Acepto los términos del contrato</span>
                                         </label>
-                                        <button type="submit" disabled={loading} class="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition disabled:opacity-50">
+                                        <button type="submit" disabled={loading} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition disabled:opacity-50">
                                             {loading ? 'Enviando...' : 'Completar Registro'}
                                         </button>
                                     </div>
