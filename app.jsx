@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Play, ChevronRight, Monitor, Wrench, DollarSign, CheckCircle2, AlertCircle, LogOut, User, Car, FileText, Share2, TrendingUp, Smartphone, ShieldCheck, Menu, X } from 'lucide-react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // --- CUSTOM CSS FOR ANIMATIONS ---
 const styles = `
@@ -119,6 +120,7 @@ export default function App() {
       <a href="https://wa.me/18495043872?text=Hola,%20quiero%20más%20información%20sobre%20cómo%20ser%20conductor%20TAD." target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-400 hover:scale-110 transition-all animate-bounce z-50 flex items-center justify-center">
         <Smartphone className="w-6 h-6" />
       </a>
+      <SpeedInsights />
     </div>
   );
 }
