@@ -1,42 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import { Play, ChevronRight, Monitor, Wrench, DollarSign, CheckCircle2, AlertCircle, LogOut, User, Car, FileText, Share2, TrendingUp, Smartphone, ShieldCheck, Menu, X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  ChevronRight,
+  CircleDollarSign,
+  FileText,
+  HelpCircle,
+  Home,
+  LogOut,
+  Menu,
+  Phone,
+  User,
+  X,
+} from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 
-// --- CUSTOM CSS FOR ANIMATIONS ---
 const styles = `
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  @keyframes pulseSoft {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
   .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
-  .delay-100 { animation-delay: 100ms; }
-  .delay-200 { animation-delay: 200ms; }
-  .delay-300 { animation-delay: 300ms; }
-  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-  .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; border-radius: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background: #FFD700; border-radius: 4px; }
+  .skeleton { animation: pulseSoft 1.3s ease-in-out infinite; }
 `;
 
-// --- LOGO TAD ---
-const LogoTAD = ({ className = "w-32 h-auto" }) => (
+const LogoTAD = ({ className = 'w-28 h-auto' }) => (
   <svg viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <path d="M40 15H80C82.7614 15 85 17.2386 85 20V40C85 42.7614 82.7614 45 80 45H40C37.2386 45 35 42.7614 35 40V20C35 17.2386 37.2386 15 40 15Z" stroke="#FFD700" strokeWidth="4"/>
-    <path d="M55 22L68 30L55 38V22Z" fill="#FFD700"/>
-    <path d="M15 22H30" stroke="#FFD700" strokeWidth="4" strokeLinecap="round"/>
-    <path d="M25 30H30" stroke="#FFD700" strokeWidth="4" strokeLinecap="round"/>
-    <path d="M10 30H15" stroke="#FFD700" strokeWidth="4" strokeLinecap="round"/>
-    <path d="M20 38H30" stroke="#FFD700" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M40 15H80C82.7614 15 85 17.2386 85 20V40C85 42.7614 82.7614 45 80 45H40C37.2386 45 35 42.7614 35 40V20C35 17.2386 37.2386 15 40 15Z" stroke="#FFC107" strokeWidth="4"/>
+    <path d="M55 22L68 30L55 38V22Z" fill="#FFC107"/>
     <text x="95" y="40" fill="#FFFFFF" fontFamily="sans-serif" fontSize="32" fontWeight="bold" letterSpacing="2">TAD</text>
   </svg>
 );
 
-// --- MAIN APP COMPONENT ---
+const financeData = {
+  pagoPorAnuncio: 500,
+  comisionVenta: 500,
+};
+
 export default function App() {
   const [currentView, setCurrentView] = useState('landing');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const styleSheet = document.createElement("style");
+    const styleSheet = document.createElement('style');
     styleSheet.innerText = styles;
     document.head.appendChild(styleSheet);
     return () => styleSheet.remove();
@@ -49,54 +57,46 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#111827] text-gray-200 font-sans selection:bg-[#FFD700] selection:text-gray-900 flex flex-col">
-      {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 bg-[#111827]/90 backdrop-blur-md border-b border-gray-800">
+    <div className="min-h-screen bg-[#111827] text-gray-200 selection:bg-[#FFC107] selection:text-gray-900 flex flex-col">
+      <nav className="sticky top-0 z-50 bg-[#111827]/90 border-b border-gray-800 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex-shrink-0 cursor-pointer" onClick={() => navigateTo('landing')}>
+          <div className="flex items-center justify-between h-20">
+            <button onClick={() => navigateTo('landing')} className="cursor-pointer">
               <LogoTAD />
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
+            </button>
+            <div className="hidden md:flex items-center gap-6">
               {currentView === 'landing' && (
                 <>
-                  <a href="#como-funciona" className="text-sm font-medium hover:text-[#FFD700] transition-colors">Cómo Funciona</a>
-                  <a href="#ganancias" className="text-sm font-medium hover:text-[#FFD700] transition-colors">Calculadora</a>
+                  <a href="#como-funciona" className="text-sm hover:text-[#FFC107]">Cómo funciona</a>
+                  <a href="#ganancias" className="text-sm hover:text-[#FFC107]">Calcula tus ganancias</a>
                 </>
               )}
               {currentView === 'dashboard' ? (
-                <button onClick={() => navigateTo('landing')} className="flex items-center text-sm font-medium text-red-400 hover:text-red-300 transition-colors">
-                  <LogOut className="w-4 h-4 mr-2" /> Cerrar Sesión
+                <button onClick={() => navigateTo('landing')} className="text-red-400 hover:text-red-300 inline-flex items-center gap-2">
+                  <LogOut className="w-4 h-4" /> Cerrar sesión
                 </button>
               ) : (
-                <button onClick={() => navigateTo('login')} className="bg-[#FFD700] text-gray-900 px-6 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_15px_rgba(255,215,0,0.3)]">
-                  Área del Conductor
+                <button
+                  onClick={() => navigateTo('login')}
+                  className="bg-[#FFC107] text-gray-900 font-bold px-5 py-2.5 rounded-full hover:bg-yellow-300 transition"
+                >
+                  Iniciar Sesión
                 </button>
               )}
             </div>
-            <div className="md:hidden flex items-center">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white">
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
+            <button onClick={() => setIsMenuOpen((prev) => !prev)} className="md:hidden">
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
         {isMenuOpen && (
-          <div className="md:hidden bg-gray-900 border-b border-gray-800 animate-fade-in">
-            <div className="px-2 pt-2 pb-4 space-y-1 sm:px-3">
-              {currentView === 'dashboard' ? (
-                <button onClick={() => navigateTo('landing')} className="block w-full text-left px-3 py-2 text-red-400 font-medium">Cerrar Sesión</button>
-              ) : (
-                <button onClick={() => navigateTo('login')} className="block w-full text-center mt-4 bg-[#FFD700] text-gray-900 px-4 py-3 rounded-md font-bold">
-                  Área del Conductor
-                </button>
-              )}
-            </div>
+          <div className="md:hidden border-t border-gray-800 p-4 space-y-3">
+            <button onClick={() => navigateTo('login')} className="w-full bg-[#FFC107] text-gray-900 py-3 rounded-xl font-bold">Iniciar Sesión</button>
+            <button onClick={() => navigateTo('register')} className="w-full border border-gray-700 py-3 rounded-xl">Registro de conductor</button>
           </div>
         )}
       </nav>
 
-      {/* DYNAMIC CONTENT VIEWS */}
       <main className="flex-grow">
         {currentView === 'landing' && <LandingView navigateTo={navigateTo} />}
         {currentView === 'login' && <LoginView navigateTo={navigateTo} />}
@@ -104,184 +104,119 @@ export default function App() {
         {currentView === 'dashboard' && <DashboardView />}
       </main>
 
-      {/* FOOTER */}
-      <footer className="bg-gray-900 border-t border-gray-800 py-8 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <LogoTAD className="w-24 h-auto mx-auto mb-4 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-          <p className="text-gray-500 text-sm">
-            TAD © 2026. Todos los derechos reservados.<br/>
-            Contratos regidos por el Código Civil de la República Dominicana.<br/>
-            Modelo de Colaboración Independiente.
-          </p>
-        </div>
+      <footer className="border-t border-gray-800 bg-gray-900 py-8 mt-auto text-center text-sm text-gray-500">
+        <LogoTAD className="w-24 mx-auto mb-3 opacity-70" />
+        TAD © 2026 • República Dominicana
       </footer>
 
-      {/* Floating WhatsApp Button */}
-      <a href="https://wa.me/18495043872?text=Hola,%20quiero%20más%20información%20sobre%20cómo%20ser%20conductor%20TAD." target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-400 hover:scale-110 transition-all animate-bounce z-50 flex items-center justify-center">
-        <Smartphone className="w-6 h-6" />
-      </a>
-      
-      {/* Vercel Web Analytics */}
       <Analytics />
     </div>
   );
 }
 
-// --- LANDING VIEW ---
 function LandingView({ navigateTo }) {
   return (
     <div className="animate-fade-in">
-      {/* HERO SECTION */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FFD700]/5 to-transparent"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-            Tu Vehículo,<br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-yellow-200"> Tu Propia Valla Digital. </span>
-          </h1>
-          <p className="mt-4 text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-            Gana dinero extra mientras conduces. Instalamos tablets de 10" para entretener a tus pasajeros y generar ingresos por publicidad. El ecosistema más rentable para choferes en RD.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <button onClick={() => navigateTo('register')} className="w-full sm:w-auto bg-[#FFD700] text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,215,0,0.4)] flex items-center justify-center">
-              Comenzar a Ganar <ChevronRight className="ml-2 w-5 h-5" />
-            </button>
-          </div>
+      <section className="py-20 lg:py-28 text-center px-4">
+        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">
+          Tu Vehículo, <span className="text-[#FFC107]">Tu Plataforma de Ingresos</span>
+        </h1>
+        <p className="mt-6 max-w-3xl mx-auto text-gray-400 text-lg">
+          Gana RD$500 por anuncio activo y RD$500 por comisión de venta. Opera todo desde tu nuevo portal del conductor TAD.
+        </p>
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+          <button onClick={() => navigateTo('register')} className="bg-[#FFC107] text-gray-900 font-bold px-8 py-4 rounded-full hover:bg-yellow-300">
+            Regístrate para empezar a ganar
+          </button>
+          <button onClick={() => navigateTo('login')} className="border border-gray-600 px-8 py-4 rounded-full hover:border-[#FFC107] hover:text-[#FFC107]">
+            Acceso de Conductor
+          </button>
         </div>
       </section>
 
-      {/* EL MODELO SECTION */}
-      <section id="como-funciona" className="py-20 bg-gray-900 border-y border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white">El Modelo de Negocio</h2>
-            <p className="mt-4 text-gray-400">Transparente, rentable y diseñado para tu beneficio.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-[#FFD700]/50 transition-all hover:-translate-y-2">
-              <div className="bg-gray-900 w-14 h-14 rounded-full flex items-center justify-center mb-6 border border-gray-700">
-                <ShieldCheck className="w-7 h-7 text-[#FFD700]" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">1. Suscripción Anual</h3>
-              <p className="text-gray-400">
-                Inversión única de <span className="text-[#FFD700] font-bold">RD$6,000</span>. Cubre tu Kit Tecnológico (Tablet 10", Soporte, Cargador) y mantenimiento por 12 meses.
-              </p>
+      <section id="como-funciona" className="bg-gray-900 border-y border-gray-800 py-16 px-4">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
+          {[
+            'Kit de instalación con suscripción de RD$6,000.',
+            'Monetización mensual por anuncios activos.',
+            'Comisión de RD$500 por cada venta referida.',
+          ].map((item, idx) => (
+            <div key={idx} className="rounded-2xl border border-gray-700 bg-gray-800/50 p-6">
+              <p className="text-[#FFC107] font-bold mb-2">Paso {idx + 1}</p>
+              <p className="text-gray-300">{item}</p>
             </div>
-            <div className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-[#FFD700]/50 transition-all hover:-translate-y-2 delay-100">
-              <div className="bg-gray-900 w-14 h-14 rounded-full flex items-center justify-center mb-6 border border-gray-700">
-                <Wrench className="w-7 h-7 text-[#FFD700]" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">2. Instalación Pro</h3>
-              <p className="text-gray-400">
-                Técnico a domicilio o en punto de encuentro. Instalación rápida, sin cables a la vista y lista para operar con FullyKiosk.
-              </p>
-            </div>
-            <div className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-[#FFD700]/50 transition-all hover:-translate-y-2 delay-200">
-              <div className="bg-gray-900 w-14 h-14 rounded-full flex items-center justify-center mb-6 border border-gray-700">
-                <TrendingUp className="w-7 h-7 text-[#FFD700]" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">3. Ingresos Pasivos</h3>
-              <p className="text-gray-400">
-                Ganas por cada anuncio que se reproduce en tu vehículo y comisiones infinitas por referir marcas.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* CALCULATOR SECTION */}
-      <section id="ganancias" className="py-20 bg-[#111827]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-700 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
-              <DollarSign className="w-64 h-64 text-[#FFD700]" />
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-2 relative z-10">Calculadora de Ganancias</h2>
-            <p className="text-gray-400 mb-8 relative z-10">Simula tus ingresos mensuales. (Máximo 15 anuncios simultáneos por vehículo).</p>
-            <Calculator />
-          </div>
+      <section id="ganancias" className="py-16 px-4">
+        <div className="max-w-5xl mx-auto rounded-3xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 p-8 md:p-10">
+          <h2 className="text-3xl font-bold">Calcula tus Ganancias</h2>
+          <p className="text-gray-400 mt-2 mb-8">Usa los valores oficiales de TAD para estimar tu ingreso mensual.</p>
+          <Calculator />
+          <button onClick={() => navigateTo('register')} className="mt-8 bg-[#FFC107] text-gray-900 px-6 py-3 rounded-xl font-bold hover:bg-yellow-300 inline-flex items-center gap-2">
+            Regístrate para empezar a ganar <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </section>
     </div>
   );
 }
 
-// --- CALCULATOR COMPONENT ---
 function Calculator() {
-  const [ads, setAds] = useState(4);
-  const [sales, setSales] = useState(0);
-  const incomePerAd = 500;
-  const commissionPerSale = 500;
-  const subscriptionCost = 6000;
-  const totalIncome = (ads * incomePerAd) + (sales * commissionPerSale);
-  const roiMonths = totalIncome > 0 ? Math.ceil(subscriptionCost / totalIncome) : '---';
+  const [ads, setAds] = useState(6);
+  const [sales, setSales] = useState(2);
+  const total = ads * financeData.pagoPorAnuncio + sales * financeData.comisionVenta;
 
   return (
-    <div className="space-y-8 relative z-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-4">
-          <label className="flex justify-between text-sm font-medium text-gray-300">
-            <span>Anuncios Activos (RD$500 c/u)</span>
-            <span className="text-[#FFD700] font-bold">{ads}</span>
-          </label>
-          <input type="range" min="0" max="15" value={ads} onChange={(e) => setAds(Number(e.target.value))} className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#FFD700]" />
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>0</span>
-            <span>Máx 15</span>
-          </div>
-        </div>
-        <div className="space-y-4">
-          <label className="flex justify-between text-sm font-medium text-gray-300">
-            <span>Ventas Propias (RD$500 c/u)</span>
-            <span className="text-[#FFD700] font-bold">{sales}</span>
-          </label>
-          <input type="number" min="0" value={sales} onChange={(e) => setSales(Math.max(0, Number(e.target.value)))} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#FFD700] transition-colors" placeholder="Ej: 2" />
-          <p className="text-xs text-gray-500">Comisiones ilimitadas si tú traes al cliente.</p>
-        </div>
+    <div className="grid md:grid-cols-2 gap-8">
+      <div>
+        <label className="text-sm text-gray-300 block mb-2">Anuncios activos ({financeData.pagoPorAnuncio} RD$ c/u)</label>
+        <input type="range" min={0} max={15} value={ads} onChange={(e) => setAds(Number(e.target.value))} className="w-full accent-[#FFC107]" />
+        <p className="text-[#FFC107] font-bold mt-2">{ads} anuncios</p>
       </div>
-      <div className="bg-gray-900/80 rounded-2xl p-6 border border-gray-700/50 flex flex-col md:flex-row items-center justify-between">
-        <div>
-          <p className="text-gray-400 text-sm mb-1">Ganancia Mensual Proyectada</p>
-          <p className="text-4xl font-extrabold text-[#FFD700]"> RD$ {totalIncome.toLocaleString()} </p>
-        </div>
-        <div className="mt-4 md:mt-0 text-right md:border-l border-gray-700 md:pl-8">
-          <p className="text-gray-400 text-sm mb-1">Retorno de Inversión (RD$6,000)</p>
-          <p className="text-xl font-bold text-white"> {roiMonths === '---' ? '---' : `En ${roiMonths} mes${roiMonths > 1 ? 'es' : ''}`} </p>
-        </div>
+      <div>
+        <label className="text-sm text-gray-300 block mb-2">Ventas referidas ({financeData.comisionVenta} RD$ c/u)</label>
+        <input type="number" min={0} value={sales} onChange={(e) => setSales(Math.max(0, Number(e.target.value) || 0))} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
       </div>
-      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 flex items-start">
-        <CheckCircle2 className="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" />
-        <p className="text-sm text-green-200"> Recuperas tu inversión de suscripción rápidamente. El resto del año es 100% ganancia pura para ti. </p>
+      <div className="md:col-span-2 rounded-2xl bg-gray-900 border border-gray-700 p-6">
+        <p className="text-gray-400">Ganancia mensual estimada</p>
+        <p className="text-4xl font-black text-[#FFC107]">RD${total.toLocaleString('es-DO')}</p>
       </div>
     </div>
   );
 }
 
-// --- LOGIN VIEW ---
 function LoginView({ navigateTo }) {
-  const handleLogin = (e) => {
+  const [mode, setMode] = useState('login');
+
+  const handleAuth = (e) => {
     e.preventDefault();
     navigateTo('dashboard');
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 animate-fade-in py-12">
-      <div className="max-w-md w-full bg-gray-800 border border-gray-700 rounded-2xl p-8 shadow-xl">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-white">Portal del Conductor</h2>
-          <p className="text-gray-400 mt-2">Ingresa para ver tus ganancias</p>
+    <div className="min-h-[80vh] px-4 py-12 flex items-center justify-center animate-fade-in">
+      <div className="max-w-md w-full rounded-3xl border border-gray-700 bg-gray-800 p-8 shadow-xl">
+        <h2 className="text-2xl font-bold text-center">Acceso de Conductor</h2>
+        <p className="text-gray-400 text-center mt-2">Ingresa con tu teléfono de WhatsApp y contraseña.</p>
+
+        <div className="mt-6 rounded-xl bg-gray-900 p-1 grid grid-cols-2 gap-1">
+          <button onClick={() => setMode('login')} className={`py-2 rounded-lg font-semibold ${mode === 'login' ? 'bg-[#FFC107] text-gray-900' : 'text-gray-300'}`}>Login</button>
+          <button onClick={() => setMode('signup')} className={`py-2 rounded-lg font-semibold ${mode === 'signup' ? 'bg-[#FFC107] text-gray-900' : 'text-gray-300'}`}>Sign Up</button>
         </div>
-        <form onSubmit={handleLogin} className="space-y-6">
+
+        <form className="mt-6 space-y-4" onSubmit={handleAuth}>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Correo Electrónico</label>
-            <input type="email" required className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#FFD700] transition-colors" placeholder="chofer@ejemplo.com" />
+            <label className="text-sm text-gray-300 mb-2 block">Teléfono (WhatsApp)</label>
+            <input required type="tel" placeholder="849-000-0000" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 focus:outline-none focus:border-[#FFC107]" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Contraseña</label>
-            <input type="password" required className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#FFD700] transition-colors" placeholder="••••••••" />
+            <label className="text-sm text-gray-300 mb-2 block">Contraseña</label>
+            <input required type="password" placeholder="••••••••" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3 focus:outline-none focus:border-[#FFC107]" />
           </div>
-          <button type="submit" className="w-full bg-[#FFD700] text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-400 transition-colors shadow-lg mt-4">
-            Entrar al Dashboard
+          <button type="submit" className="w-full bg-[#FFC107] text-gray-900 py-3 rounded-xl font-bold hover:bg-yellow-300 transition">
+            {mode === 'login' ? 'Entrar al portal' : 'Crear cuenta de conductor'}
           </button>
         </form>
       </div>
@@ -289,273 +224,253 @@ function LoginView({ navigateTo }) {
   );
 }
 
-// --- REGISTER VIEW ---
 function RegisterView({ navigateTo }) {
   const [step, setStep] = useState(1);
-  const [agreed, setAgreed] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    nombre: '', apellido: '', cedula: '', telefono: '',
-    marca: '', ano: '', placa: '', aplicacion: 'uber'
+    nombre: '',
+    cedula: '',
+    aire: 'sí',
+    plataforma: 'sí',
   });
 
-  const nextStep = () => setStep(prev => Math.min(prev + 1, 3));
-  const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
-  const handleInputChange = (e) => {
+  const updateField = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleComplete = async () => {
-    if (!agreed) return;
-    setIsSubmitting(true);
-    
-    // Google Apps Script URL - TAD Dominicana
-    const scriptURL = "https://script.google.com/macros/s/AKfycbyF5Sk3R51l0J3bP5lgM2_MV6Qs47Wo-a8wQFme5cBpaNUnlH85h5Z37P6_2fXZRDVh/exec";
-    
-    try {
-      if (scriptURL !== "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI") {
-        const formPayload = new FormData();
-        Object.keys(formData).forEach(key => formPayload.append(key, formData[key]));
-        await fetch(scriptURL, { method: 'POST', body: formPayload, mode: 'no-cors' });
-      }
-      
-      const message = `Hola, he completado mi registro en el portal TAD a nombre de ${formData.nombre} ${formData.apellido} y deseo proceder con el pago de mi suscripción anual de RD$6,000 para recibir mi Kit Tecnológico.`;
-      window.open(`https://wa.me/18495043872?text=${encodeURIComponent(message)}`, '_blank');
-      navigateTo('landing');
-    } catch (error) {
-      console.error('Error al guardar los datos:', error);
-      alert('Hubo un error al conectar con la base de datos, pero te redirigiremos a WhatsApp para continuar.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 animate-fade-in py-12">
-      <div className="max-w-2xl w-full bg-gray-800 border border-gray-700 rounded-2xl shadow-xl overflow-hidden">
-        {/* Progress Bar */}
-        <div className="bg-gray-900 px-8 py-4 border-b border-gray-700 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 1 ? 'bg-[#FFD700] text-gray-900' : 'bg-gray-700 text-gray-400'}`}>1</div>
-            <div className={`w-12 h-1 ${step >= 2 ? 'bg-[#FFD700]' : 'bg-gray-700'}`}></div>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 2 ? 'bg-[#FFD700] text-gray-900' : 'bg-gray-700 text-gray-400'}`}>2</div>
-            <div className={`w-12 h-1 ${step >= 3 ? 'bg-[#FFD700]' : 'bg-gray-700'}`}></div>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 3 ? 'bg-[#FFD700] text-gray-900' : 'bg-gray-700 text-gray-400'}`}>3</div>
-          </div>
-          <span className="text-sm font-medium text-gray-400">Paso {step} de 3</span>
+    <div className="min-h-[80vh] px-4 py-10 animate-fade-in">
+      <div className="max-w-3xl mx-auto rounded-3xl border border-gray-700 bg-gray-800 p-6 md:p-10">
+        <h2 className="text-2xl md:text-3xl font-bold">Registro de Conductor TAD</h2>
+        <p className="text-gray-400 mt-2">Completa los 3 pasos del onboarding.</p>
+
+        <div className="flex gap-2 mt-6">
+          {[1, 2, 3].map((n) => <div key={n} className={`h-2 flex-1 rounded-full ${step >= n ? 'bg-[#FFC107]' : 'bg-gray-700'}`} />)}
         </div>
 
-        <div className="p-8">
-          {/* STEP 1 */}
-          {step === 1 && (
-            <div className="animate-fade-in">
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center"><User className="mr-2 text-[#FFD700]" /> Datos Personales</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Nombre</label>
-                    <input name="nombre" value={formData.nombre} onChange={handleInputChange} type="text" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-[#FFD700] focus:outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Apellido</label>
-                    <input name="apellido" value={formData.apellido} onChange={handleInputChange} type="text" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-[#FFD700] focus:outline-none" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Cédula</label>
-                  <input name="cedula" value={formData.cedula} onChange={handleInputChange} type="text" placeholder="000-0000000-0" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-[#FFD700] focus:outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Teléfono (WhatsApp)</label>
-                  <input name="telefono" value={formData.telefono} onChange={handleInputChange} type="tel" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-[#FFD700] focus:outline-none" />
-                </div>
-              </div>
-              <div className="mt-8 flex justify-end">
-                <button onClick={nextStep} className="bg-[#FFD700] text-gray-900 px-6 py-2 rounded-lg font-bold hover:bg-yellow-400 transition-colors">Siguiente</button>
-              </div>
-            </div>
-          )}
+        {step === 1 && (
+          <div className="mt-8 space-y-4">
+            <h3 className="font-bold text-xl">Paso 1: Datos Personales</h3>
+            <input name="nombre" value={formData.nombre} onChange={updateField} placeholder="Nombre completo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="cedula" value={formData.cedula} onChange={updateField} placeholder="Cédula" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+          </div>
+        )}
 
-          {/* STEP 2 */}
-          {step === 2 && (
-            <div className="animate-fade-in">
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center"><Car className="mr-2 text-[#FFD700]" /> Datos del Vehículo</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Marca / Modelo</label>
-                    <input name="marca" value={formData.marca} onChange={handleInputChange} type="text" placeholder="Ej: Hyundai Sonata Y20" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-[#FFD700] focus:outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Año</label>
-                    <input name="ano" value={formData.ano} onChange={handleInputChange} type="number" placeholder="Ej: 2015" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-[#FFD700] focus:outline-none" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Placa</label>
-                  <input name="placa" value={formData.placa} onChange={handleInputChange} type="text" className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-[#FFD700] focus:outline-none" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Aplicación Principal</label>
-                  <select name="aplicacion" value={formData.aplicacion} onChange={handleInputChange} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-[#FFD700] focus:outline-none">
-                    <option value="uber">Uber</option>
-                    <option value="didi">DiDi</option>
-                    <option value="indrive">inDrive</option>
-                    <option value="privado">Taxi Privado / Base</option>
-                  </select>
-                </div>
-              </div>
-              <div className="mt-8 flex justify-between">
-                <button onClick={prevStep} className="text-gray-400 hover:text-white px-4 py-2 font-medium">Atrás</button>
-                <button onClick={nextStep} className="bg-[#FFD700] text-gray-900 px-6 py-2 rounded-lg font-bold hover:bg-yellow-400 transition-colors">Siguiente</button>
-              </div>
-            </div>
-          )}
+        {step === 2 && (
+          <div className="mt-8 space-y-4">
+            <h3 className="font-bold text-xl">Paso 2: Datos del Vehículo</h3>
+            <label className="block">¿Tiene aire acondicionado?</label>
+            <select name="aire" value={formData.aire} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="sí">Sí</option>
+              <option value="no">No</option>
+            </select>
+            <label className="block">¿Es de plataforma?</label>
+            <select name="plataforma" value={formData.plataforma} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="sí">Sí</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        )}
 
-          {/* STEP 3 */}
-          {step === 3 && (
-            <div className="animate-fade-in">
-              <h3 className="text-xl font-bold text-white mb-6 flex items-center"><FileText className="mr-2 text-[#FFD700]" /> Contrato Mercantil</h3>
-              <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 h-64 overflow-y-auto custom-scrollbar mb-6 text-sm text-gray-400 space-y-4">
-                <h4 className="font-bold text-white text-center">CONTRATO DE COLABORACIÓN MERCANTIL INDEPENDIENTE</h4>
-                <p><strong>ENTRE:</strong> Por una parte, <strong>TAD</strong>, y por la otra parte, EL COLABORADOR INDEPENDIENTE.</p>
-                <p><strong>PRIMERO:</strong> TAD autoriza a EL COLABORADOR a instalar un Kit Tecnológico en su vehículo.</p>
-                <p><strong>SEGUNDO:</strong> ESTE ACUERDO NO CONSTITUYE UN CONTRATO DE TRABAJO. Se utilizan equipos para generar ingresos suplementarios.</p>
-                <p><strong>TERCERO:</strong> Suscripción anual de RD$6,000.00 que cubre uso del Kit, software y mantenimiento.</p>
-                <p><strong>CUARTO:</strong> Compensación de RD$500.00 mensuales por anuncio activo (máx 15) y RD$500 de comisión por referidos.</p>
-              </div>
-              <div className="flex items-start mb-8">
-                <div className="flex items-center h-5">
-                  <input id="terms" type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="w-5 h-5 bg-gray-900 border-gray-700 rounded accent-[#FFD700] cursor-pointer" />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label htmlFor="terms" className="font-medium text-white cursor-pointer">
-                    Acepto términos de colaboración mercantil no-laboral.
-                  </label>
-                  <p className="text-gray-500">Reconozco que este registro guardará mis datos y me redirigirá para el pago.</p>
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <button onClick={prevStep} disabled={isSubmitting} className="text-gray-400 hover:text-white px-4 py-2 font-medium disabled:opacity-50">Atrás</button>
-                <button onClick={handleComplete} disabled={!agreed || isSubmitting} className={`px-6 py-3 rounded-lg font-bold flex items-center transition-all ${ agreed && !isSubmitting ? 'bg-[#FFD700] text-gray-900 hover:bg-yellow-400 hover:scale-105 shadow-[0_0_15px_rgba(255,215,0,0.3)]' : 'bg-gray-700 text-gray-500 cursor-not-allowed' }`}>
-                  {isSubmitting ? 'Guardando Datos...' : 'Confirmar y Pagar'} {!isSubmitting && <ChevronRight className="ml-2 w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-          )}
+        {step === 3 && (
+          <div className="mt-8 rounded-2xl border border-[#FFC107]/40 bg-[#FFC107]/10 p-6">
+            <h3 className="font-bold text-xl mb-2">Paso 3: Confirmación de suscripción</h3>
+            <p className="text-gray-300">Para activar tu cuenta de conductor debes completar el pago de RD$6,000 por el Kit TAD.</p>
+            <button onClick={() => navigateTo('login')} className="mt-4 bg-[#FFC107] text-gray-900 px-6 py-3 rounded-xl font-bold">Confirmar y continuar</button>
+          </div>
+        )}
+
+        <div className="mt-8 flex justify-between">
+          <button onClick={() => setStep((s) => Math.max(1, s - 1))} className="px-4 py-2 text-gray-300" disabled={step === 1}>Atrás</button>
+          <button onClick={() => setStep((s) => Math.min(3, s + 1))} className="px-6 py-3 rounded-xl bg-[#FFC107] text-gray-900 font-bold" disabled={step === 3}>Siguiente</button>
         </div>
       </div>
     </div>
   );
 }
 
-// --- DASHBOARD VIEW ---
 function DashboardView() {
-  const [activeTab, setActiveTab] = useState('resumen');
+  const [tab, setTab] = useState('inicio');
+  const [isLoading, setIsLoading] = useState(true);
+  const [monthFilter, setMonthFilter] = useState('Todos');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const payments = [
+    { id: 1, month: 'Enero', ads: 8, sales: 2 },
+    { id: 2, month: 'Febrero', ads: 10, sales: 3 },
+    { id: 3, month: 'Marzo', ads: 12, sales: 2 },
+    { id: 4, month: 'Abril', ads: 11, sales: 4 },
+  ].map((row) => ({
+    ...row,
+    total: row.ads * financeData.pagoPorAnuncio + row.sales * financeData.comisionVenta,
+  }));
+
+  const filteredPayments = useMemo(
+    () => payments.filter((p) => monthFilter === 'Todos' || p.month === monthFilter),
+    [monthFilter],
+  );
+
+  const tabs = [
+    { id: 'inicio', label: 'Inicio', icon: Home },
+    { id: 'perfil', label: 'Mi Perfil', icon: User },
+    { id: 'ganancias', label: 'Mis Ganancias', icon: CircleDollarSign },
+    { id: 'soporte', label: 'Soporte', icon: HelpCircle },
+  ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
-      {/* Header Dashboard */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Portal del Conductor</h1>
-        <p className="text-gray-400">Bienvenido al sistema de gestión TAD</p>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in pb-24 md:pb-8 md:grid md:grid-cols-[230px_1fr] gap-6">
+      <aside className="hidden md:block bg-gray-900 border border-gray-800 rounded-2xl p-3 h-fit sticky top-24">
+        {tabs.map(({ id, label, icon: Icon }) => (
+          <button key={id} onClick={() => setTab(id)} className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl mb-2 ${tab === id ? 'bg-[#FFC107] text-gray-900 font-bold' : 'text-gray-300 hover:bg-gray-800'}`}>
+            <Icon className="w-5 h-5" /> {label}
+          </button>
+        ))}
+      </aside>
 
-      {/* Tabs */}
-      <div className="flex space-x-4 mb-8 border-b border-gray-700">
-        <button onClick={() => setActiveTab('resumen')} className={`px-4 py-2 font-medium transition-colors ${activeTab === 'resumen' ? 'text-[#FFD700] border-b-2 border-[#FFD700]' : 'text-gray-400 hover:text-white'}`}>
-          Resumen
-        </button>
-        <button onClick={() => setActiveTab('anuncios')} className={`px-4 py-2 font-medium transition-colors ${activeTab === 'anuncios' ? 'text-[#FFD700] border-b-2 border-[#FFD700]' : 'text-gray-400 hover:text-white'}`}>
-          Anuncios
-        </button>
-      </div>
-
-      {/* Tab Content: Resumen */}
-      {activeTab === 'resumen' && (
-        <div className="animate-fade-in space-y-6">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-              <p className="text-gray-400 text-sm font-bold">Anuncios Activos</p>
-              <h3 className="text-3xl font-black text-white mt-2">9 / 15</h3>
-              <p className="text-xs text-green-400 mt-1">RD$4,500 este mes</p>
-            </div>
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-              <p className="text-gray-400 text-sm font-bold">Referidos</p>
-              <h3 className="text-3xl font-black text-white mt-2">3</h3>
-              <p className="text-xs text-green-400 mt-1">RD$1,500 este mes</p>
-            </div>
-            <div className="bg-[#FFD700] rounded-xl p-6 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:scale-110 transition-transform"><DollarSign className="w-20 h-20 text-gray-900" /></div>
-              <p className="text-gray-900 text-sm font-bold">Ganancias Acumuladas</p>
-              <h3 className="text-4xl font-black text-gray-900 mt-2">RD$ 6,000</h3>
-              <p className="text-xs text-gray-800 mt-1 font-medium">Ciclo: Marzo 2026</p>
-            </div>
-          </div>
-
-          {/* Referidos */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 md:p-8">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="mb-6 md:mb-0 md:mr-8">
-                <h3 className="text-xl font-bold text-white mb-2">Programa de Referidos (Sin Límite)</h3>
-                <p className="text-gray-400 text-sm max-w-md">
-                  Por cada marca o negocio que refieras y pague pauta en TAD, ganas <strong className="text-[#FFD700]">RD$500 mensuales</strong> mientras su anuncio esté activo. No hay límite de comisiones.
-                </p>
+      <section>
+        {tab === 'inicio' && (
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold">Inicio (Resumen)</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="rounded-2xl bg-[#FFC107] text-gray-900 p-6">
+                <p className="font-semibold">Saldo Disponible</p>
+                <p className="text-5xl font-black mt-2">RD$7,500</p>
               </div>
-              <div className="w-full md:w-auto flex flex-col space-y-3">
-                <button className="bg-white text-gray-900 px-6 py-3 rounded-lg font-bold flex items-center justify-center hover:bg-gray-100 transition-colors">
-                  <Share2 className="w-5 h-5 mr-2" /> Copiar Enlace de Ventas
-                </button>
-                <a href="https://wa.me/?text=Anúnciate%20en%20los%20taxis%20de%20TAD.%20Contáctalos%20y%20diles%20que%20vienes%20de%20mi%20parte%20(A123456)." target="_blank" rel="noopener noreferrer" className="bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold flex items-center justify-center hover:bg-green-500 transition-colors">
-                  Compartir por WhatsApp
-                </a>
+              <div className="rounded-2xl border border-gray-700 bg-gray-800 p-6">
+                <p className="text-gray-400">Anuncios Activos</p>
+                <p className="text-4xl font-black mt-2">12</p>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Tab Content: Anuncios */}
-      {activeTab === 'anuncios' && (
-        <div className="animate-fade-in">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-700 flex justify-between items-center bg-gray-800/50">
-              <h3 className="font-bold text-white">Proyectándose en tu vehículo</h3>
-              <span className="bg-gray-900 text-[#FFD700] text-xs font-bold px-3 py-1 rounded-full border border-gray-700">9 / 15 Máximo</span>
+        {tab === 'perfil' && (
+          <div className="space-y-5">
+            <h2 className="text-3xl font-bold">Mi Perfil</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <UploadField label="Foto de perfil" icon={User} />
+              <UploadField label="Foto de la cédula" icon={FileText} />
+              <input className="rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" placeholder="Placa" />
+              <input className="rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" placeholder="Modelo" />
+              <input className="rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" placeholder="Año" />
+              <button className="bg-[#FFC107] text-gray-900 rounded-xl font-bold px-5 py-3">Guardar perfil</button>
             </div>
-            <div className="divide-y divide-gray-700">
-              {[
-                { id: 1, marca: "Supermercados Nacional", tipo: "Video 15s", estado: "Activo" },
-                { id: 2, marca: "Banco Popular (AutoPréstamo)", tipo: "Imagen estática", estado: "Activo" },
-                { id: 3, marca: "Claro (Internet Fibra)", tipo: "Video 10s", estado: "Activo" },
-                { id: 4, marca: "Restaurante El Pelícano", tipo: "Referido Tuyo", estado: "Activo", referido: true },
-                { id: 5, marca: "Seguros Universal", tipo: "Video 15s", estado: "Activo" },
-              ].map((ad) => (
-                <div key={ad.id} className="p-6 flex items-center justify-between hover:bg-gray-750 transition-colors">
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 bg-gray-900 rounded-lg flex items-center justify-center border border-gray-700 mr-4">
-                      {ad.tipo.includes('Video') ? <Play className="w-6 h-6 text-gray-500" /> : <Monitor className="w-6 h-6 text-gray-500" />}
-                    </div>
-                    <div>
-                      <h4 className="text-white font-medium flex items-center">
-                        {ad.marca}
-                        {ad.referido && <span className="ml-2 bg-[#FFD700]/20 text-[#FFD700] text-[10px] font-bold px-2 py-0.5 rounded uppercase">Venta Propia</span>}
-                      </h4>
-                      <p className="text-sm text-gray-500">{ad.tipo}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[#FFD700] font-bold">+RD$500</p>
-                    <p className="text-xs text-green-400">{ad.estado}</p>
-                  </div>
+          </div>
+        )}
+
+        {tab === 'ganancias' && (
+          <div>
+            <h2 className="text-3xl font-bold mb-4">Mis Ganancias</h2>
+            {isLoading ? (
+              <div className="space-y-4">
+                <div className="h-40 rounded-2xl bg-gray-800 skeleton" />
+                <div className="h-20 rounded-2xl bg-gray-800 skeleton" />
+                <div className="h-20 rounded-2xl bg-gray-800 skeleton" />
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="rounded-2xl border border-gray-700 bg-gray-900 p-5">
+                  <p className="text-sm text-gray-400 mb-3">Progresión mensual (RD$)</p>
+                  <LineChart data={payments} />
                 </div>
-              ))}
-            </div>
+
+                <div className="rounded-2xl border border-gray-700 bg-gray-900 overflow-hidden">
+                  <div className="p-4 border-b border-gray-800 flex items-center justify-between">
+                    <h3 className="font-bold">Historial de pagos recibidos</h3>
+                    <select value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)} className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+                      <option>Todos</option>
+                      {payments.map((p) => <option key={p.id}>{p.month}</option>)}
+                    </select>
+                  </div>
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-800/60 text-gray-300">
+                      <tr>
+                        <th className="text-left p-3">Mes</th>
+                        <th className="text-left p-3">Anuncios</th>
+                        <th className="text-left p-3">Comisiones</th>
+                        <th className="text-left p-3">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredPayments.map((row) => (
+                        <tr key={row.id} className="border-t border-gray-800">
+                          <td className="p-3">{row.month}</td>
+                          <td className="p-3">RD${row.ads * financeData.pagoPorAnuncio}</td>
+                          <td className="p-3">RD${row.sales * financeData.comisionVenta}</td>
+                          <td className="p-3 text-[#FFC107] font-bold">RD${row.total.toLocaleString('es-DO')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        )}
+
+        {tab === 'soporte' && (
+          <div className="rounded-2xl border border-gray-700 bg-gray-900 p-6">
+            <h2 className="text-3xl font-bold mb-3">Soporte</h2>
+            <p className="text-gray-400 mb-5">¿Necesitas ayuda con tu cuenta o instalación?</p>
+            <a href="https://wa.me/18495043872" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#FFC107] text-gray-900 px-6 py-3 rounded-xl font-bold">
+              <Phone className="w-5 h-5" /> WhatsApp 8495043872
+            </a>
+          </div>
+        )}
+      </section>
+
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 grid grid-cols-4">
+        {tabs.map(({ id, label, icon: Icon }) => (
+          <button key={id} onClick={() => setTab(id)} className={`py-3 text-xs flex flex-col items-center gap-1 ${tab === id ? 'text-[#FFC107]' : 'text-gray-400'}`}>
+            <Icon className="w-4 h-4" /> {label}
+          </button>
+        ))}
+      </nav>
     </div>
+  );
+}
+
+function UploadField({ label, icon: Icon }) {
+  return (
+    <label className="rounded-xl border border-dashed border-gray-600 bg-gray-900 p-4 flex items-center gap-3 cursor-pointer">
+      <Icon className="w-5 h-5 text-[#FFC107]" />
+      <span className="text-sm">{label}</span>
+      <input type="file" className="hidden" />
+    </label>
+  );
+}
+
+function LineChart({ data }) {
+  const width = 560;
+  const height = 180;
+  const max = Math.max(...data.map((d) => d.total));
+  const stepX = width / (data.length - 1);
+
+  const points = data
+    .map((d, i) => {
+      const x = i * stepX;
+      const y = height - (d.total / max) * (height - 20) - 10;
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-44">
+      <polyline fill="none" stroke="#FFC107" strokeWidth="4" points={points} />
+      {data.map((d, i) => {
+        const x = i * stepX;
+        const y = height - (d.total / max) * (height - 20) - 10;
+        return (
+          <g key={d.id}>
+            <circle cx={x} cy={y} r="4" fill="#FFC107" />
+            <text x={x} y={height - 2} fill="#9CA3AF" fontSize="10" textAnchor="middle">{d.month.slice(0, 3)}</text>
+          </g>
+        );
+      })}
+    </svg>
   );
 }
