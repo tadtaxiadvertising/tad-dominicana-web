@@ -233,20 +233,38 @@
                 e.preventDefault();
                 setLoading(true);
                 
+                // Preparar datos con los nombres exactos que espera Google Sheets
+                const datosParaEnviar = {
+                    nombre: formData.nombre,
+                    apellido: formData.apellido,
+                    cedula: formData.cedula,
+                    telefono: formData.telefono,
+                    marca: formData.marca,
+                    modelo: formData.modelo,
+                    ano: formData.ano,
+                    placa: formData.placa,
+                    aplicacion: 'Web'
+                };
+                
+                console.log('Enviando datos:', datosParaEnviar);
+                
                 try {
+                    // Intentar con no-cors primero
                     await fetch(scriptURL, {
                         method: 'POST',
                         mode: 'no-cors',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            ...formData,
-                            fecha: new Date().toISOString()
-                        })
+                        body: JSON.stringify(datosParaEnviar)
                     });
+                    
+                    // Pequeña pausa para asegurar que Google Apps Script procese
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    console.log('Datos enviados exitosamente');
                     setSubmitted(true);
                 } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error al enviar. Intenta de nuevo.');
+                    console.error('Error completo:', error);
+                    alert('Error al enviar: ' + error.message + '. Intenta de nuevo o contacta por WhatsApp.');
                 }
                 setLoading(false);
             }, [formData]);
