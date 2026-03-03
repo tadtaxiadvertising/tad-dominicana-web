@@ -12,12 +12,15 @@
  */
 function doPost(e) {
   try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('Registros TAD') || ss.getActiveSheet();
     var payload = parsePayload(e);
 
     if (!payload || Object.keys(payload).length === 0) {
       return buildResponse('error', 'No se recibieron datos del formulario');
     }
+
+    ensureHeaders(sheet);
 
     // Mapeo tolerante a variaciones de nombres de campos.
     var rowData = [
@@ -122,6 +125,30 @@ function getValue(source, keys, defaultValue) {
   }
 
   return defaultValue !== undefined ? defaultValue : '';
+}
+
+function ensureHeaders(sheet) {
+  var expected = [
+    'Fecha', 'Nombre', 'Apellido', 'Cédula', 'Teléfono', 'Marca', 'Modelo', 'Año', 'Placa',
+    'Plataformas', 'Horas por día', 'Días por semana', 'Ciudad', 'Horario',
+    '¿Tiene tablet?', 'Experiencia en ventas', 'Aplicación'
+  ];
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(expected);
+    sheet.getRange(1, 1, 1, expected.length).setFontWeight('bold');
+    return;
+  }
+
+  var current = sheet.getRange(1, 1, 1, expected.length).getValues()[0];
+  var isHeaderRow = expected.some(function(value, idx) {
+    return String(current[idx] || '').trim() === value;
+  });
+
+  if (!isHeaderRow && sheet.getLastRow() === 1 && String(sheet.getRange(1, 1).getValue()).trim() === '') {
+    sheet.getRange(1, 1, 1, expected.length).setValues([expected]);
+    sheet.getRange(1, 1, 1, expected.length).setFontWeight('bold');
+  }
 }
 
 function buildResponse(status, message) {

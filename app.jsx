@@ -246,6 +246,7 @@ function RegisterView({ navigateTo }) {
   const [submitMessage, setSubmitMessage] = useState('');
 
   const scriptURL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbyF5Sk3R51l0J3bP5lgM2_MV6Qs47Wo-a8wQFme5cBpaNUnlH85h5Z37P6_2fXZRDVh/exec';
+  const onboardingSource = 'Web Onboarding TAD';
 
   const updateField = (e) => {
     const { name, value } = e.target;
@@ -297,12 +298,16 @@ function RegisterView({ navigateTo }) {
     try {
       const payload = {
         ...formData,
+        aplicacion: onboardingSource,
         plataforma: formData.plataformas,
         horas_por_dia: formData.horasDiarias,
         dias_por_semana: formData.diasSemana,
         tiene_tablet: formData.tieneTablet,
         experiencia_ventas: formData.experienciaVentas,
+        requestId: String(Date.now()),
       };
+
+      const encodedPayload = new URLSearchParams(payload).toString();
 
       await fetch(scriptURL, {
         method: 'POST',
@@ -310,10 +315,16 @@ function RegisterView({ navigateTo }) {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         },
-        body: new URLSearchParams(payload).toString(),
+        body: encodedPayload,
       });
 
-      setSubmitMessage('Registro enviado correctamente.');
+      // Fallback adicional para entornos que bloquean el POST no-cors en la redirección de Apps Script.
+      if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+        var beaconData = new Blob([encodedPayload], { type: 'application/x-www-form-urlencoded;charset=UTF-8' });
+        navigator.sendBeacon(scriptURL, beaconData);
+      }
+
+      setSubmitMessage('Registro enviado. Estamos validando tu información.');
       navigateTo('login');
     } catch (error) {
       setSubmitMessage(`Error al enviar: ${error.message}`);
@@ -334,17 +345,19 @@ function RegisterView({ navigateTo }) {
 
         {step === 1 && (
           <div className="mt-8 space-y-4">
-            <h3 className="font-bold text-xl">Paso 1: Datos Personales</h3>
-            <input name="nombre" value={formData.nombre} onChange={updateField} placeholder="Nombre" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
-            <input name="apellido" value={formData.apellido} onChange={updateField} placeholder="Apellido" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <h3 className="font-bold text-xl">Paso 1: Cuéntanos sobre ti</h3>
+            <p className="text-sm text-gray-400">Estos datos son necesarios para contactarte y validar tu registro.</p>
+            <input name="nombre" value={formData.nombre} onChange={updateField} placeholder="Ej: Juan" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="apellido" value={formData.apellido} onChange={updateField} placeholder="Ej: Pérez" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="cedula" value={formData.cedula} onChange={updateField} placeholder="Cédula" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
-            <input name="telefono" value={formData.telefono} onChange={updateField} placeholder="Teléfono" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="telefono" value={formData.telefono} onChange={updateField} placeholder="Ej: 8091234567" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
           </div>
         )}
 
         {step === 2 && (
           <div className="mt-8 space-y-4">
-            <h3 className="font-bold text-xl">Paso 2: Datos del Vehículo</h3>
+            <h3 className="font-bold text-xl">Paso 2: Tu operación diaria</h3>
+            <p className="text-sm text-gray-400">Responde estas preguntas para recomendarte campañas adecuadas.</p>
             <input name="marca" value={formData.marca} onChange={updateField} placeholder="Marca" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="modelo" value={formData.modelo} onChange={updateField} placeholder="Modelo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="ano" value={formData.ano} onChange={updateField} placeholder="Año" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
