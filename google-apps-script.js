@@ -5,87 +5,207 @@
 // y guardarlos en Google Sheets automáticamente
 // ============================================
 
-// URL de tu Google Sheet (créalo primero)
-// 1. Ve a https://sheets.google.com
-// 2. Crea nueva hoja: "Registros TAD"
-// 3. Crea columnas: Fecha, Nombre, Apellido, Cédula, Teléfono, Marca, Año, Placa, Aplicación
-// 4. Extensiones > Apps Script
-// 5. Pega este código
-// 6. Implementar > Nueva implementación > Tipo: Aplicación web
-// 7. Quién tiene acceso: Cualquiera
-// 8. Copia la URL y pégala en app.jsx
-
+/**
+ * Soporta payloads enviados como:
+ * - query params / x-www-form-urlencoded (e.parameter)
+ * - JSON en body (e.postData.contents)
+ */
 function doPost(e) {
   try {
-    // Obtener la hoja activa
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // Obtener datos del formulario
-    var data = e.parameter;
-    
-    // Crear fila con los datos
-    var fila = [
-      new Date(),                    // Fecha
-      data.nombre || '',             // Nombre
-      data.apellido || '',           // Apellido
-      data.cedula || '',             // Cédula
-      data.telefono || '',           // Teléfono
-      data.marca || '',              // Marca/Modelo
-      data.ano || '',                // Año
-      data.placa || '',              // Placa
-      data.aplicacion || ''          // Aplicación
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('Registros TAD') || ss.getActiveSheet();
+    var payload = parsePayload(e);
+    var normalizedPayload = normalizePayloadKeys(payload);
+
+    if (!payload || Object.keys(payload).length === 0) {
+      return buildResponse('error', 'No se recibieron datos del formulario');
+    }
+
+    ensureHeaders(sheet);
+
+    // Mapeo tolerante a variaciones de nombres de campos.
+    var rowData = [
+      new Date(),                                       // A: Fecha
+      getValue(payload, normalizedPayload, ['nombre']),                    // B: Nombre
+      getValue(payload, normalizedPayload, ['apellido']),                  // C: Apellido
+      getValue(payload, normalizedPayload, ['cedula']),                    // D: Cédula
+      getValue(payload, normalizedPayload, ['telefono', 'tel']),           // E: Teléfono
+      getValue(payload, normalizedPayload, ['marca']),                     // F: Marca
+      getValue(payload, normalizedPayload, ['modelo']),                    // G: Modelo
+      getValue(payload, normalizedPayload, ['ano', 'año']),                // H: Año
+      getValue(payload, normalizedPayload, ['placa']),                     // I: Placa
+      getValue(payload, normalizedPayload, ['plataformas', 'plataforma']), // J: Plataformas
+      getValue(payload, normalizedPayload, ['horasDiarias', 'horas_diarias', 'horas_por_dia', 'horas por dia']), // K: Horas por día
+      getValue(payload, normalizedPayload, ['diasSemana', 'dias_semana', 'dias_por_semana', 'dias por semana']), // L: Días por semana
+      getValue(payload, normalizedPayload, ['ciudad']),                    // M: Ciudad
+      getValue(payload, normalizedPayload, ['horario']),                   // N: Horario
+      getValue(payload, normalizedPayload, ['tieneTablet', 'tiene_tablet', 'tiene tablet']), // O: ¿Tiene tablet?
+      getValue(payload, normalizedPayload, ['experienciaVentas', 'experiencia_ventas', 'experiencia en ventas']), // P: Experiencia en ventas
+      getValue(payload, normalizedPayload, ['aplicacion', 'aplicación'], 'Web') // Q: Aplicación
     ];
-    
-    // Agregar fila a la hoja
-    sheet.appendRow(fila);
-    
-    // Formatear la nueva fila (negrita para la fecha)
-    var ultimaFila = sheet.getLastRow();
-    sheet.getRange(ultimaFila, 1).setFontWeight('bold');
-    
-    // Retornar éxito
-    return ContentService.createTextOutput(JSON.stringify({
-      'status': 'success',
-      'message': 'Registro guardado exitosamente'
-    })).setMimeType(ContentService.MimeType.JSON);
-    
+
+    sheet.appendRow(rowData);
+
+    var lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow, 1).setFontWeight('bold');
+
+    return buildResponse('success', 'Registro guardado exitosamente');
   } catch (error) {
-    // Retornar error
-    return ContentService.createTextOutput(JSON.stringify({
-      'status': 'error',
-      'message': error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
+    return buildResponse('error', 'Error interno: ' + error.message);
   }
+}
+
+function doGet(e) {
+  return doPost(e);
+}
+
+function parsePayload(e) {
+  if (!e) return {};
+
+  var merged = {};
+
+  if (e.parameter) {
+    merged = Object.assign(merged, e.parameter);
+  }
+
+  if (e.parameters) {
+    for (var key in e.parameters) {
+      if (e.parameters.hasOwnProperty(key) && e.parameters[key] && e.parameters[key].length) {
+        merged[key] = e.parameters[key][0];
+      }
+    }
+  }
+
+  if (e.postData && e.postData.contents) {
+    var raw = e.postData.contents;
+    var contentType = (e.postData.type || '').toLowerCase();
+
+    if (contentType.indexOf('application/json') > -1) {
+      try {
+        var json = JSON.parse(raw);
+        if (json && typeof json === 'object') {
+          merged = Object.assign(merged, json);
+        }
+      } catch (_) {
+        // Si no se puede parsear JSON, se mantiene e.parameter.
+      }
+    } else {
+      // Fallback para casos no-cors/text/plain que llegan como querystring en el body.
+      merged = Object.assign(merged, parseFormEncoded(raw));
+    }
+  }
+
+  return merged;
+}
+
+function parseFormEncoded(raw) {
+  var out = {};
+  if (!raw) return out;
+
+  var parts = String(raw).split('&');
+  for (var i = 0; i < parts.length; i++) {
+    var piece = parts[i];
+    if (!piece) continue;
+
+    var kv = piece.split('=');
+    var key = decodeURIComponent((kv[0] || '').replace(/\+/g, ' '));
+    var value = decodeURIComponent((kv.slice(1).join('=') || '').replace(/\+/g, ' '));
+
+    if (key) out[key] = value;
+  }
+
+  return out;
+}
+
+function normalizeKeyName(key) {
+  return String(key || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function normalizePayloadKeys(source) {
+  var out = {};
+  for (var key in source) {
+    if (source.hasOwnProperty(key)) {
+      out[normalizeKeyName(key)] = source[key];
+    }
+  }
+
+  return out;
+}
+
+function getValue(source, normalizedSource, keys, defaultValue) {
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var normalizedKey = normalizeKeyName(key);
+
+    var direct = source[key];
+    var normalized = normalizedSource[normalizedKey];
+    var value = direct !== undefined ? direct : normalized;
+
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      return value;
+    }
+  }
+
+  return defaultValue !== undefined ? defaultValue : '';
+}
+
+function ensureHeaders(sheet) {
+  var expected = [
+    'Fecha', 'Nombre', 'Apellido', 'Cédula', 'Teléfono', 'Marca', 'Modelo', 'Año', 'Placa',
+    'Plataformas', 'Horas por día', 'Días por semana', 'Ciudad', 'Horario',
+    '¿Tiene tablet?', 'Experiencia en ventas', 'Aplicación'
+  ];
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(expected);
+    sheet.getRange(1, 1, 1, expected.length).setFontWeight('bold');
+    return;
+  }
+
+  var current = sheet.getRange(1, 1, 1, expected.length).getValues()[0];
+  var isHeaderRow = expected.some(function(value, idx) {
+    return String(current[idx] || '').trim() === value;
+  });
+
+  if (!isHeaderRow && sheet.getLastRow() === 1 && String(sheet.getRange(1, 1).getValue()).trim() === '') {
+    sheet.getRange(1, 1, 1, expected.length).setValues([expected]);
+    sheet.getRange(1, 1, 1, expected.length).setFontWeight('bold');
+  }
+}
+
+function buildResponse(status, message) {
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: status, message: message }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 // Función opcional: Enviar email de notificación cuando hay nuevo registro
 function enviarEmailNotificacion(data) {
   try {
-    var emailTo = "tad.taxiadvertising@gmail.com";
-    var subject = "🚗 Nuevo Registro TAD - " + data.nombre + " " + data.apellido;
-    var body = `
-      NUEVO CONDUCTOR REGISTRADO
-      
-      Fecha: ${new Date().toLocaleString()}
-      
-      DATOS PERSONALES:
-      Nombre: ${data.nombre} ${data.apellido}
-      Cédula: ${data.cedula}
-      Teléfono: ${data.telefono}
-      
-      DATOS DEL VEHÍCULO:
-      Marca/Modelo: ${data.marca}
-      Año: ${data.ano}
-      Placa: ${data.placa}
-      Aplicación: ${data.aplicacion}
-      
-      ---
-      TAD Dominicana - Sistema de Registro Automático
-    `;
-    
+    var emailTo = 'tad.taxiadvertising@gmail.com';
+    var subject = '🚗 Nuevo Registro TAD - ' + (data.nombre || '') + ' ' + (data.apellido || '');
+    var body =
+      'NUEVO CONDUCTOR REGISTRADO\n\n' +
+      'Fecha: ' + new Date().toLocaleString() + '\n\n' +
+      'DATOS PERSONALES:\n' +
+      'Nombre: ' + (data.nombre || '') + ' ' + (data.apellido || '') + '\n' +
+      'Cédula: ' + (data.cedula || '') + '\n' +
+      'Teléfono: ' + (data.telefono || '') + '\n\n' +
+      'DATOS DEL VEHÍCULO:\n' +
+      'Marca: ' + (data.marca || '') + '\n' +
+      'Modelo: ' + (data.modelo || '') + '\n' +
+      'Año: ' + (data.ano || data['año'] || '') + '\n' +
+      'Placa: ' + (data.placa || '') + '\n' +
+      'Aplicación: ' + (data.aplicacion || 'Web') + '\n\n' +
+      '---\n' +
+      'TAD Dominicana - Sistema de Registro Automático';
+
     MailApp.sendEmail(emailTo, subject, body);
-    
   } catch (error) {
-    Logger.log("Error enviando email: " + error.toString());
+    Logger.log('Error enviando email: ' + error.toString());
   }
 }

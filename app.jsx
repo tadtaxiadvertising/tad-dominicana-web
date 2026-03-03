@@ -11,7 +11,6 @@ import {
   User,
   X,
 } from 'lucide-react';
-import { Analytics } from '@vercel/analytics/react';
 
 const styles = `
   @keyframes fadeIn {
@@ -109,7 +108,6 @@ export default function App() {
         TAD © 2026 • República Dominicana
       </footer>
 
-      <Analytics />
     </div>
   );
 }
@@ -164,8 +162,8 @@ function LandingView({ navigateTo }) {
 }
 
 function Calculator() {
-  const [ads, setAds] = useState(6);
-  const [sales, setSales] = useState(2);
+  const [ads, setAds] = useState(0);
+  const [sales, setSales] = useState(0);
   const total = ads * financeData.pagoPorAnuncio + sales * financeData.comisionVenta;
 
   return (
@@ -228,14 +226,113 @@ function RegisterView({ navigateTo }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     nombre: '',
+    apellido: '',
     cedula: '',
-    aire: 'sí',
-    plataforma: 'sí',
+    telefono: '',
+    marca: '',
+    modelo: '',
+    ano: '',
+    placa: '',
+    plataformas: '',
+    horasDiarias: '',
+    diasSemana: '',
+    ciudad: '',
+    horario: '',
+    tieneTablet: '',
+    experienciaVentas: '',
+    aplicacion: 'Web',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
+
+  const scriptURL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbyF5Sk3R51l0J3bP5lgM2_MV6Qs47Wo-a8wQFme5cBpaNUnlH85h5Z37P6_2fXZRDVh/exec';
+  const onboardingSource = 'Web Onboarding TAD';
 
   const updateField = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const requiredFieldsByStep = {
+    1: ['nombre', 'apellido', 'cedula', 'telefono'],
+    2: ['marca', 'modelo', 'ano', 'placa', 'plataformas', 'horasDiarias', 'diasSemana', 'ciudad', 'horario', 'tieneTablet', 'experienciaVentas'],
+  };
+
+  const stepHasMissingFields = (stepNumber) => {
+    var fields = requiredFieldsByStep[stepNumber] || [];
+    return fields.some((field) => !String(formData[field] || '').trim());
+  };
+
+  const isPlatformSelected = (platform) =>
+    formData.plataformas.split(',').map((item) => item.trim()).filter(Boolean).includes(platform);
+
+  const togglePlatform = (platform) => {
+    const selected = formData.plataformas.split(',').map((item) => item.trim()).filter(Boolean);
+    const updated = selected.includes(platform)
+      ? selected.filter((item) => item !== platform)
+      : [...selected, platform];
+
+    setFormData((prev) => ({ ...prev, plataformas: updated.join(', ') }));
+  };
+
+  const goToNextStep = () => {
+    if (stepHasMissingFields(step)) {
+      setSubmitMessage('Completa todas las preguntas de este paso para continuar.');
+      return;
+    }
+
+    setSubmitMessage('');
+    setStep((s) => Math.min(3, s + 1));
+  };
+
+  const submitRegister = async () => {
+    setSubmitMessage('');
+
+    if (stepHasMissingFields(1) || stepHasMissingFields(2)) {
+      setSubmitMessage('Aún faltan respuestas obligatorias antes de enviar.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const payload = {
+        ...formData,
+        aplicacion: onboardingSource,
+        plataforma: formData.plataformas,
+        horas_por_dia: formData.horasDiarias,
+        dias_por_semana: formData.diasSemana,
+        tiene_tablet: formData.tieneTablet,
+        experiencia_ventas: formData.experienciaVentas,
+        requestId: String(Date.now()),
+      };
+
+      const encodedPayload = new URLSearchParams(payload).toString();
+
+      // 1) Intento principal: sendBeacon (muy estable para envío en segundo plano)
+      var beaconSent = false;
+      if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+        var beaconBlob = new Blob([encodedPayload], { type: 'application/x-www-form-urlencoded;charset=UTF-8' });
+        beaconSent = navigator.sendBeacon(scriptURL, beaconBlob);
+      }
+
+      // 2) Fallback: fetch no-cors sin headers personalizados para evitar preflight.
+      if (!beaconSent) {
+        await fetch(scriptURL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: encodedPayload,
+          keepalive: true,
+        });
+      }
+
+      setSubmitMessage('Registro enviado correctamente.');
+      setTimeout(() => navigateTo('login'), 600);
+    } catch (error) {
+      setSubmitMessage(`Error al enviar: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -250,39 +347,107 @@ function RegisterView({ navigateTo }) {
 
         {step === 1 && (
           <div className="mt-8 space-y-4">
-            <h3 className="font-bold text-xl">Paso 1: Datos Personales</h3>
-            <input name="nombre" value={formData.nombre} onChange={updateField} placeholder="Nombre completo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <h3 className="font-bold text-xl">Paso 1: Cuéntanos sobre ti</h3>
+            <p className="text-sm text-gray-400">Estos datos son necesarios para contactarte y validar tu registro.</p>
+            <input name="nombre" value={formData.nombre} onChange={updateField} placeholder="Ej: Juan" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="apellido" value={formData.apellido} onChange={updateField} placeholder="Ej: Pérez" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="cedula" value={formData.cedula} onChange={updateField} placeholder="Cédula" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="telefono" value={formData.telefono} onChange={updateField} placeholder="Ej: 8091234567" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
           </div>
         )}
 
         {step === 2 && (
           <div className="mt-8 space-y-4">
-            <h3 className="font-bold text-xl">Paso 2: Datos del Vehículo</h3>
-            <label className="block">¿Tiene aire acondicionado?</label>
-            <select name="aire" value={formData.aire} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
-              <option value="sí">Sí</option>
-              <option value="no">No</option>
+            <h3 className="font-bold text-xl">Paso 2: Tu operación diaria</h3>
+            <p className="text-sm text-gray-400">Responde estas preguntas para recomendarte campañas adecuadas.</p>
+            <input name="marca" value={formData.marca} onChange={updateField} placeholder="Marca" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="modelo" value={formData.modelo} onChange={updateField} placeholder="Modelo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="ano" value={formData.ano} onChange={updateField} placeholder="Año" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="placa" value={formData.placa} onChange={updateField} placeholder="Placa" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <label className="block text-sm text-gray-300">¿En qué plataforma(s) trabajas actualmente?</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {['Uber', 'InDrive', 'DiDi', 'Otra'].map((platform) => (
+                <button
+                  key={platform}
+                  type="button"
+                  onClick={() => togglePlatform(platform)}
+                  className={`rounded-xl border px-3 py-2 text-sm transition ${isPlatformSelected(platform) ? 'border-[#FFC107] bg-[#FFC107]/20 text-[#FFC107]' : 'border-gray-700 bg-gray-900 text-gray-300 hover:border-gray-500'}`}
+                >
+                  {platform}
+                </button>
+              ))}
+            </div>
+            <input name="plataformas" value={formData.plataformas} onChange={updateField} placeholder="Puedes editar o agregar más plataformas aquí" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <label className="block text-sm text-gray-300">¿Cuántas horas conduces por día?</label>
+            <select name="horasDiarias" value={formData.horasDiarias} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona un rango</option>
+              <option value="1-4">1 a 4 horas</option>
+              <option value="5-8">5 a 8 horas</option>
+              <option value="9-12">9 a 12 horas</option>
+              <option value="12+">Más de 12 horas</option>
             </select>
-            <label className="block">¿Es de plataforma?</label>
-            <select name="plataforma" value={formData.plataforma} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
-              <option value="sí">Sí</option>
-              <option value="no">No</option>
+            <label className="block text-sm text-gray-300">¿Cuántos días trabajas por semana?</label>
+            <select name="diasSemana" value={formData.diasSemana} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona una opción</option>
+              <option value="1-3">1 a 3 días</option>
+              <option value="4-5">4 a 5 días</option>
+              <option value="6">6 días</option>
+              <option value="7">7 días</option>
+            </select>
+            <label className="block text-sm text-gray-300">¿En qué ciudad operas principalmente?</label>
+            <input name="ciudad" value={formData.ciudad} onChange={updateField} placeholder="Ej: Santo Domingo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <label className="block text-sm text-gray-300">¿Cuál es tu horario más frecuente?</label>
+            <select name="horario" value={formData.horario} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona un horario</option>
+              <option value="Mañana">Mañana</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Noche">Noche</option>
+              <option value="Mixto">Mixto</option>
+            </select>
+            <label className="block">¿Tiene tablet?</label>
+            <select name="tieneTablet" value={formData.tieneTablet} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona una opción</option>
+              <option value="Sí">Sí</option>
+              <option value="No">No</option>
+            </select>
+            <label className="block">¿Tiene experiencia en ventas?</label>
+            <select name="experienciaVentas" value={formData.experienciaVentas} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona una opción</option>
+              <option value="Sí">Sí</option>
+              <option value="No">No</option>
             </select>
           </div>
         )}
 
         {step === 3 && (
           <div className="mt-8 rounded-2xl border border-[#FFC107]/40 bg-[#FFC107]/10 p-6">
-            <h3 className="font-bold text-xl mb-2">Paso 3: Confirmación de suscripción</h3>
-            <p className="text-gray-300">Para activar tu cuenta de conductor debes completar el pago de RD$6,000 por el Kit TAD.</p>
-            <button onClick={() => navigateTo('login')} className="mt-4 bg-[#FFC107] text-gray-900 px-6 py-3 rounded-xl font-bold">Confirmar y continuar</button>
+            <h3 className="font-bold text-xl mb-2">Paso 3: Confirmación y envío</h3>
+            <p className="text-gray-300">Revisa los datos y envía tu registro para completar el onboarding.</p>
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-300">
+              <p><strong>Nombre:</strong> {formData.nombre} {formData.apellido}</p>
+              <p><strong>Cédula:</strong> {formData.cedula}</p>
+              <p><strong>Teléfono:</strong> {formData.telefono}</p>
+              <p><strong>Vehículo:</strong> {formData.marca} {formData.modelo} ({formData.ano})</p>
+              <p><strong>Placa:</strong> {formData.placa}</p>
+              <p><strong>Plataformas:</strong> {formData.plataformas}</p>
+              <p><strong>Horas por día:</strong> {formData.horasDiarias}</p>
+              <p><strong>Días por semana:</strong> {formData.diasSemana}</p>
+              <p><strong>Ciudad:</strong> {formData.ciudad}</p>
+              <p><strong>Horario:</strong> {formData.horario}</p>
+              <p><strong>¿Tiene tablet?:</strong> {formData.tieneTablet}</p>
+              <p><strong>Experiencia en ventas:</strong> {formData.experienciaVentas}</p>
+              <p><strong>Aplicación:</strong> {formData.aplicacion}</p>
+            </div>
+            {submitMessage && <p className="mt-3 text-sm text-[#FFC107]">{submitMessage}</p>}
+            <button onClick={submitRegister} disabled={isSubmitting} className="mt-4 bg-[#FFC107] text-gray-900 px-6 py-3 rounded-xl font-bold disabled:opacity-50">
+              {isSubmitting ? 'Enviando...' : 'Finalizar registro'}
+            </button>
           </div>
         )}
 
         <div className="mt-8 flex justify-between">
           <button onClick={() => setStep((s) => Math.max(1, s - 1))} className="px-4 py-2 text-gray-300" disabled={step === 1}>Atrás</button>
-          <button onClick={() => setStep((s) => Math.min(3, s + 1))} className="px-6 py-3 rounded-xl bg-[#FFC107] text-gray-900 font-bold" disabled={step === 3}>Siguiente</button>
+          <button onClick={goToNextStep} className="px-6 py-3 rounded-xl bg-[#FFC107] text-gray-900 font-bold disabled:opacity-50" disabled={step === 3 || stepHasMissingFields(step)}>Siguiente</button>
         </div>
       </div>
     </div>
