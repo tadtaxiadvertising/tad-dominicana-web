@@ -11,7 +11,6 @@ import {
   User,
   X,
 } from 'lucide-react';
-import { Analytics } from '@vercel/analytics/react';
 
 const styles = `
   @keyframes fadeIn {
@@ -109,7 +108,6 @@ export default function App() {
         TAD © 2026 • República Dominicana
       </footer>
 
-      <Analytics />
     </div>
   );
 }
@@ -228,14 +226,63 @@ function RegisterView({ navigateTo }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     nombre: '',
+    apellido: '',
     cedula: '',
-    aire: 'sí',
-    plataforma: 'sí',
+    telefono: '',
+    marca: '',
+    modelo: '',
+    ano: '',
+    placa: '',
+    plataformas: '',
+    horasDiarias: '',
+    diasSemana: '',
+    ciudad: '',
+    horario: '',
+    tieneTablet: '',
+    experienciaVentas: '',
+    aplicacion: 'Web',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
+
+  const scriptURL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || '';
 
   const updateField = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const submitRegister = async () => {
+    setSubmitMessage('');
+    setIsSubmitting(true);
+
+    try {
+      if (!scriptURL) {
+        setSubmitMessage('Registro completado localmente. Agrega VITE_GOOGLE_SCRIPT_URL para guardar en Sheets.');
+        navigateTo('login');
+        return;
+      }
+
+      const response = await fetch(scriptURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        },
+        body: new URLSearchParams(formData).toString(),
+      });
+
+      const text = await response.text();
+      if (!response.ok) {
+        throw new Error(text || 'No se pudo enviar el formulario');
+      }
+
+      setSubmitMessage('Registro enviado correctamente.');
+      navigateTo('login');
+    } catch (error) {
+      setSubmitMessage(`Error al enviar: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -251,32 +298,57 @@ function RegisterView({ navigateTo }) {
         {step === 1 && (
           <div className="mt-8 space-y-4">
             <h3 className="font-bold text-xl">Paso 1: Datos Personales</h3>
-            <input name="nombre" value={formData.nombre} onChange={updateField} placeholder="Nombre completo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="nombre" value={formData.nombre} onChange={updateField} placeholder="Nombre" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="apellido" value={formData.apellido} onChange={updateField} placeholder="Apellido" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="cedula" value={formData.cedula} onChange={updateField} placeholder="Cédula" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="telefono" value={formData.telefono} onChange={updateField} placeholder="Teléfono" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
           </div>
         )}
 
         {step === 2 && (
           <div className="mt-8 space-y-4">
             <h3 className="font-bold text-xl">Paso 2: Datos del Vehículo</h3>
-            <label className="block">¿Tiene aire acondicionado?</label>
-            <select name="aire" value={formData.aire} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
-              <option value="sí">Sí</option>
-              <option value="no">No</option>
+            <input name="marca" value={formData.marca} onChange={updateField} placeholder="Marca" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="modelo" value={formData.modelo} onChange={updateField} placeholder="Modelo" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="ano" value={formData.ano} onChange={updateField} placeholder="Año" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="placa" value={formData.placa} onChange={updateField} placeholder="Placa" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <label className="block">¿En qué plataforma(s) trabajas?</label>
+            <input name="plataformas" value={formData.plataformas} onChange={updateField} placeholder="Uber, InDrive, DiDi..." className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="horasDiarias" value={formData.horasDiarias} onChange={updateField} placeholder="Horas por día" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="diasSemana" value={formData.diasSemana} onChange={updateField} placeholder="Días por semana" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="ciudad" value={formData.ciudad} onChange={updateField} placeholder="Ciudad" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="horario" value={formData.horario} onChange={updateField} placeholder="Horario habitual" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <label className="block">¿Tiene tablet?</label>
+            <select name="tieneTablet" value={formData.tieneTablet} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona una opción</option>
+              <option value="Sí">Sí</option>
+              <option value="No">No</option>
             </select>
-            <label className="block">¿Es de plataforma?</label>
-            <select name="plataforma" value={formData.plataforma} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
-              <option value="sí">Sí</option>
-              <option value="no">No</option>
+            <label className="block">¿Tiene experiencia en ventas?</label>
+            <select name="experienciaVentas" value={formData.experienciaVentas} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
+              <option value="">Selecciona una opción</option>
+              <option value="Sí">Sí</option>
+              <option value="No">No</option>
             </select>
           </div>
         )}
 
         {step === 3 && (
           <div className="mt-8 rounded-2xl border border-[#FFC107]/40 bg-[#FFC107]/10 p-6">
-            <h3 className="font-bold text-xl mb-2">Paso 3: Confirmación de suscripción</h3>
-            <p className="text-gray-300">Para activar tu cuenta de conductor debes completar el pago de RD$6,000 por el Kit TAD.</p>
-            <button onClick={() => navigateTo('login')} className="mt-4 bg-[#FFC107] text-gray-900 px-6 py-3 rounded-xl font-bold">Confirmar y continuar</button>
+            <h3 className="font-bold text-xl mb-2">Paso 3: Confirmación y envío</h3>
+            <p className="text-gray-300">Revisa los datos y envía tu registro para completar el onboarding.</p>
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-300">
+              <p><strong>Nombre:</strong> {formData.nombre} {formData.apellido}</p>
+              <p><strong>Cédula:</strong> {formData.cedula}</p>
+              <p><strong>Teléfono:</strong> {formData.telefono}</p>
+              <p><strong>Vehículo:</strong> {formData.marca} {formData.modelo} ({formData.ano})</p>
+              <p><strong>Placa:</strong> {formData.placa}</p>
+              <p><strong>Plataformas:</strong> {formData.plataformas}</p>
+            </div>
+            {submitMessage && <p className="mt-3 text-sm text-[#FFC107]">{submitMessage}</p>}
+            <button onClick={submitRegister} disabled={isSubmitting} className="mt-4 bg-[#FFC107] text-gray-900 px-6 py-3 rounded-xl font-bold disabled:opacity-50">
+              {isSubmitting ? 'Enviando...' : 'Finalizar registro'}
+            </button>
           </div>
         )}
 
