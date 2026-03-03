@@ -233,28 +233,28 @@
                 e.preventDefault();
                 setLoading(true);
                 
-                // Preparar datos con los nombres exactos que espera Google Sheets
-                const datosParaEnviar = {
-                    nombre: formData.nombre,
-                    apellido: formData.apellido,
-                    cedula: formData.cedula,
-                    telefono: formData.telefono,
-                    marca: formData.marca,
-                    modelo: formData.modelo,
-                    ano: formData.ano,
-                    placa: formData.placa,
-                    aplicacion: 'Web'
-                };
+                // Preparar datos como URLSearchParams (lo que espera e.parameter)
+                const params = new URLSearchParams();
+                params.append('nombre', formData.nombre);
+                params.append('apellido', formData.apellido);
+                params.append('cedula', formData.cedula);
+                params.append('telefono', formData.telefono);
+                params.append('marca', formData.marca);
+                params.append('modelo', formData.modelo);
+                params.append('ano', formData.ano);
+                params.append('placa', formData.placa);
+                params.append('aplicacion', 'Web');
                 
-                console.log('Enviando datos:', datosParaEnviar);
+                console.log('Enviando datos:', Object.fromEntries(params));
                 
                 try {
-                    // Intentar con no-cors primero
                     await fetch(scriptURL, {
                         method: 'POST',
                         mode: 'no-cors',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify(datosParaEnviar)
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: params.toString()
                     });
                     
                     // Pequeña pausa para asegurar que Google Apps Script procese
