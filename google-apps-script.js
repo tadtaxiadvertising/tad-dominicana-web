@@ -5,39 +5,19 @@
 // y guardarlos en Google Sheets automáticamente
 // ============================================
 
-var HEADERS = [
-  'Fecha',
+var DEFAULT_HEADERS = [
+  'Hora',
   'Nombre',
   'Apellido',
   'Cédula',
   'Teléfono',
-  'Correo del conductor',
+  'Correo',
   'Marca',
   'Modelo',
   'Año',
   'Placa',
   'Plataformas',
-  'Horas por día',
-  'Días por semana',
-  'Ciudad',
-  'Horario',
-  '¿Tiene tablet?',
-  'Experiencia en ventas',
-  'Aplicación'
-];
-
-var LEGACY_HEADERS_WITHOUT_EMAIL = [
-  'Fecha',
-  'Nombre',
-  'Apellido',
-  'Cédula',
-  'Teléfono',
-  'Marca',
-  'Modelo',
-  'Año',
-  'Placa',
-  'Plataformas',
-  'Horas por día',
+  'Horas por dia',
   'Días por semana',
   'Ciudad',
   'Horario',
@@ -63,29 +43,9 @@ function doPost(e) {
 
     ensureHeaders(sheet);
 
-    var normalizedPayload = normalizePayloadKeys(payload);
-
-    // Mapeo tolerante a variaciones de nombres de campos.
-    var rowData = [
-      new Date(),
-      getValue(payload, normalizedPayload, ['nombre']),
-      getValue(payload, normalizedPayload, ['apellido']),
-      getValue(payload, normalizedPayload, ['cedula']),
-      getValue(payload, normalizedPayload, ['telefono', 'tel']),
-      getValue(payload, normalizedPayload, ['correoConductor', 'correo_conductor', 'correo', 'email', 'e-mail']),
-      getValue(payload, normalizedPayload, ['marca']),
-      getValue(payload, normalizedPayload, ['modelo']),
-      getValue(payload, normalizedPayload, ['ano', 'año']),
-      getValue(payload, normalizedPayload, ['placa']),
-      getValue(payload, normalizedPayload, ['plataformas', 'plataforma']),
-      getValue(payload, normalizedPayload, ['horasDiarias', 'horas_diarias', 'horas_por_dia', 'horas por dia']),
-      getValue(payload, normalizedPayload, ['diasSemana', 'dias_semana', 'dias_por_semana', 'dias por semana']),
-      getValue(payload, normalizedPayload, ['ciudad']),
-      getValue(payload, normalizedPayload, ['horario']),
-      getValue(payload, normalizedPayload, ['tieneTablet', 'tiene_tablet', 'tiene tablet']),
-      getValue(payload, normalizedPayload, ['experienciaVentas', 'experiencia_ventas', 'experiencia en ventas']),
-      getValue(payload, normalizedPayload, ['aplicacion', 'aplicación'], 'Web')
-    ];
+    var canonicalRecord = buildCanonicalRecord(payload);
+    var headers = getSheetHeaders(sheet);
+    var rowData = buildRowByHeaders(headers, canonicalRecord);
 
     sheet.appendRow(rowData);
 
@@ -165,6 +125,18 @@ function normalizeKeyName(key) {
     .replace(/[^a-z0-9]/g, '');
 }
 
+function normalizeIncomingValue(value) {
+  if (Array.isArray(value)) {
+    return value.join(', ');
+  }
+
+  if (value !== null && typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+
+  return value;
+}
+
 function normalizePayloadKeys(source) {
   var out = {};
   for (var key in source) {
@@ -186,73 +158,121 @@ function getValue(source, normalizedSource, keys, defaultValue) {
     var value = direct !== undefined ? direct : normalized;
 
     if (value !== undefined && value !== null && String(value).trim() !== '') {
-      return value;
+      return String(value).trim();
     }
   }
 
   return defaultValue !== undefined ? defaultValue : '';
 }
 
-function normalizeIncomingValue(value) {
-  if (Array.isArray(value)) {
-    return value.join(', ');
+function buildCanonicalRecord(payload) {
+  var normalizedPayload = normalizePayloadKeys(payload);
+
+  return {
+    fechaHora: new Date(),
+    nombre: getValue(payload, normalizedPayload, ['nombre']),
+    apellido: getValue(payload, normalizedPayload, ['apellido']),
+    cedula: getValue(payload, normalizedPayload, ['cedula']),
+    telefono: getValue(payload, normalizedPayload, ['telefono', 'tel']),
+    correo: getValue(payload, normalizedPayload, ['correoConductor', 'correo_conductor', 'correo', 'email', 'e-mail']),
+    marca: getValue(payload, normalizedPayload, ['marca']),
+    modelo: getValue(payload, normalizedPayload, ['modelo']),
+    ano: getValue(payload, normalizedPayload, ['ano', 'año']),
+    placa: getValue(payload, normalizedPayload, ['placa']),
+    plataformas: getValue(payload, normalizedPayload, ['plataformas', 'plataforma']),
+    horasDia: getValue(payload, normalizedPayload, ['horasDiarias', 'horas_diarias', 'horas_por_dia', 'horas por dia']),
+    diasSemana: getValue(payload, normalizedPayload, ['diasSemana', 'dias_semana', 'dias_por_semana', 'dias por semana']),
+    ciudad: getValue(payload, normalizedPayload, ['ciudad']),
+    horario: getValue(payload, normalizedPayload, ['horario']),
+    tieneTablet: getValue(payload, normalizedPayload, ['tieneTablet', 'tiene_tablet', 'tiene tablet']),
+    experienciaVentas: getValue(payload, normalizedPayload, ['experienciaVentas', 'experiencia_ventas', 'experiencia en ventas']),
+    aplicacion: getValue(payload, normalizedPayload, ['aplicacion', 'aplicación'], 'Web')
+  };
+}
+
+function buildRowByHeaders(headers, record) {
+  var row = [];
+
+  for (var i = 0; i < headers.length; i++) {
+    var canonicalField = mapHeaderToCanonicalField(headers[i]);
+    row.push(canonicalField ? (record[canonicalField] || '') : '');
   }
 
-  if (value !== null && typeof value === 'object') {
-    return JSON.stringify(value);
-  }
+  return row;
+}
 
-  return value;
+function mapHeaderToCanonicalField(headerValue) {
+  var key = normalizeKeyName(headerValue);
+
+  if (!key) return '';
+  if (key === 'hora' || key === 'fecha' || key === 'fechahora' || key === 'timestamp') return 'fechaHora';
+  if (key === 'nombre') return 'nombre';
+  if (key === 'apellido') return 'apellido';
+  if (key === 'cedula') return 'cedula';
+  if (key === 'telefono' || key === 'tel') return 'telefono';
+  if (key === 'correo' || key === 'correodelconductor' || key === 'email' || key === 'mail') return 'correo';
+  if (key === 'marca') return 'marca';
+  if (key === 'modelo') return 'modelo';
+  if (key === 'ano') return 'ano';
+  if (key === 'placa') return 'placa';
+  if (key === 'plataformas' || key === 'plataforma') return 'plataformas';
+  if (key === 'horaspordia' || key === 'horasdia') return 'horasDia';
+  if (key === 'diasporsemana' || key === 'diassemana') return 'diasSemana';
+  if (key === 'ciudad') return 'ciudad';
+  if (key === 'horario') return 'horario';
+  if (key === 'tienetablet') return 'tieneTablet';
+  if (key === 'experienciaenventas' || key === 'experienciaventas') return 'experienciaVentas';
+  if (key === 'aplicacion') return 'aplicacion';
+
+  return '';
 }
 
 function ensureHeaders(sheet) {
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(HEADERS);
-    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+    sheet.appendRow(DEFAULT_HEADERS);
+    sheet.getRange(1, 1, 1, DEFAULT_HEADERS.length).setFontWeight('bold');
     return;
   }
 
-  var width = Math.max(sheet.getLastColumn(), HEADERS.length);
-  var firstRow = sheet.getRange(1, 1, 1, width).getValues()[0];
-  var cleanCurrent = firstRow.map(function(cell) {
-    return String(cell || '').trim();
+  var headers = getSheetHeaders(sheet);
+
+  // Si la primera fila está vacía, inicializamos encabezados.
+  var hasHeaderText = headers.some(function(h) { return String(h || '').trim() !== ''; });
+  if (!hasHeaderText) {
+    sheet.getRange(1, 1, 1, DEFAULT_HEADERS.length).setValues([DEFAULT_HEADERS]);
+    sheet.getRange(1, 1, 1, DEFAULT_HEADERS.length).setFontWeight('bold');
+    return;
+  }
+
+  // Si no existe columna de correo, la insertamos después de Teléfono.
+  var hasCorreoHeader = headers.some(function(h) {
+    var key = normalizeKeyName(h);
+    return key === 'correo' || key === 'correodelconductor' || key === 'email' || key === 'mail';
   });
 
-  var matchesCurrentSchema = headersMatch(cleanCurrent, HEADERS);
-  if (matchesCurrentSchema) {
-    return;
-  }
+  if (!hasCorreoHeader) {
+    var telefonoIndex = -1;
+    for (var i = 0; i < headers.length; i++) {
+      var headerKey = normalizeKeyName(headers[i]);
+      if (headerKey === 'telefono' || headerKey === 'tel') {
+        telefonoIndex = i;
+        break;
+      }
+    }
 
-  var matchesLegacySchema = headersMatch(cleanCurrent, LEGACY_HEADERS_WITHOUT_EMAIL);
-  if (matchesLegacySchema) {
-    // Inserta nueva columna de correo en la posición correcta (columna 6),
-    // moviendo datos existentes para no desalinear registros históricos.
-    sheet.insertColumnBefore(6);
-    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
-    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
-    return;
-  }
-
-  var hasDataAfterHeader = sheet.getLastRow() > 1;
-  if (!hasDataAfterHeader) {
-    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
-    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
-    return;
-  }
-
-  // No forzamos sobreescritura con datos existentes y encabezados no reconocidos.
-  // Solo registramos para revisión manual y evitamos dañar el mapeo histórico.
-  Logger.log('Encabezados no reconocidos en la hoja. Revisar manualmente primera fila: ' + JSON.stringify(cleanCurrent));
-}
-
-function headersMatch(currentRow, expectedRow) {
-  for (var i = 0; i < expectedRow.length; i++) {
-    if (String(currentRow[i] || '').trim() !== expectedRow[i]) {
-      return false;
+    if (telefonoIndex >= 0) {
+      sheet.insertColumnAfter(telefonoIndex + 1);
+      sheet.getRange(1, telefonoIndex + 2).setValue('Correo').setFontWeight('bold');
+    } else {
+      var newCol = headers.length + 1;
+      sheet.getRange(1, newCol).setValue('Correo').setFontWeight('bold');
     }
   }
+}
 
-  return true;
+function getSheetHeaders(sheet) {
+  var totalCols = Math.max(sheet.getLastColumn(), DEFAULT_HEADERS.length);
+  return sheet.getRange(1, 1, 1, totalCols).getValues()[0];
 }
 
 function buildResponse(status, message) {
