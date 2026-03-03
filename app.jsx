@@ -229,6 +229,7 @@ function RegisterView({ navigateTo }) {
     apellido: '',
     cedula: '',
     telefono: '',
+    correoConductor: '',
     marca: '',
     modelo: '',
     ano: '',
@@ -254,7 +255,7 @@ function RegisterView({ navigateTo }) {
   };
 
   const requiredFieldsByStep = {
-    1: ['nombre', 'apellido', 'cedula', 'telefono'],
+    1: ['nombre', 'apellido', 'cedula', 'telefono', 'correoConductor'],
     2: ['marca', 'modelo', 'ano', 'placa', 'plataformas', 'horasDiarias', 'diasSemana', 'ciudad', 'horario', 'tieneTablet', 'experienciaVentas'],
   };
 
@@ -353,6 +354,7 @@ function RegisterView({ navigateTo }) {
             <input name="apellido" value={formData.apellido} onChange={updateField} placeholder="Ej: Pérez" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="cedula" value={formData.cedula} onChange={updateField} placeholder="Cédula" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="telefono" value={formData.telefono} onChange={updateField} placeholder="Ej: 8091234567" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <input name="correoConductor" type="email" value={formData.correoConductor} onChange={updateField} placeholder="Ej: juan@email.com" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
           </div>
         )}
 
@@ -427,6 +429,7 @@ function RegisterView({ navigateTo }) {
               <p><strong>Nombre:</strong> {formData.nombre} {formData.apellido}</p>
               <p><strong>Cédula:</strong> {formData.cedula}</p>
               <p><strong>Teléfono:</strong> {formData.telefono}</p>
+              <p><strong>Correo:</strong> {formData.correoConductor}</p>
               <p><strong>Vehículo:</strong> {formData.marca} {formData.modelo} ({formData.ano})</p>
               <p><strong>Placa:</strong> {formData.placa}</p>
               <p><strong>Plataformas:</strong> {formData.plataformas}</p>

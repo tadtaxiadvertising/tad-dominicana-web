@@ -30,18 +30,19 @@ function doPost(e) {
       getValue(payload, normalizedPayload, ['apellido']),                  // C: Apellido
       getValue(payload, normalizedPayload, ['cedula']),                    // D: Cédula
       getValue(payload, normalizedPayload, ['telefono', 'tel']),           // E: Teléfono
-      getValue(payload, normalizedPayload, ['marca']),                     // F: Marca
-      getValue(payload, normalizedPayload, ['modelo']),                    // G: Modelo
-      getValue(payload, normalizedPayload, ['ano', 'año']),                // H: Año
-      getValue(payload, normalizedPayload, ['placa']),                     // I: Placa
-      getValue(payload, normalizedPayload, ['plataformas', 'plataforma']), // J: Plataformas
-      getValue(payload, normalizedPayload, ['horasDiarias', 'horas_diarias', 'horas_por_dia', 'horas por dia']), // K: Horas por día
-      getValue(payload, normalizedPayload, ['diasSemana', 'dias_semana', 'dias_por_semana', 'dias por semana']), // L: Días por semana
-      getValue(payload, normalizedPayload, ['ciudad']),                    // M: Ciudad
-      getValue(payload, normalizedPayload, ['horario']),                   // N: Horario
-      getValue(payload, normalizedPayload, ['tieneTablet', 'tiene_tablet', 'tiene tablet']), // O: ¿Tiene tablet?
-      getValue(payload, normalizedPayload, ['experienciaVentas', 'experiencia_ventas', 'experiencia en ventas']), // P: Experiencia en ventas
-      getValue(payload, normalizedPayload, ['aplicacion', 'aplicación'], 'Web') // Q: Aplicación
+      getValue(payload, normalizedPayload, ['correoConductor', 'correo_conductor', 'correo', 'email', 'e-mail']), // F: Correo del conductor
+      getValue(payload, normalizedPayload, ['marca']),                     // G: Marca
+      getValue(payload, normalizedPayload, ['modelo']),                    // H: Modelo
+      getValue(payload, normalizedPayload, ['ano', 'año']),                // I: Año
+      getValue(payload, normalizedPayload, ['placa']),                     // J: Placa
+      getValue(payload, normalizedPayload, ['plataformas', 'plataforma']), // K: Plataformas
+      getValue(payload, normalizedPayload, ['horasDiarias', 'horas_diarias', 'horas_por_dia', 'horas por dia']), // L: Horas por día
+      getValue(payload, normalizedPayload, ['diasSemana', 'dias_semana', 'dias_por_semana', 'dias por semana']), // M: Días por semana
+      getValue(payload, normalizedPayload, ['ciudad']),                    // N: Ciudad
+      getValue(payload, normalizedPayload, ['horario']),                   // O: Horario
+      getValue(payload, normalizedPayload, ['tieneTablet', 'tiene_tablet', 'tiene tablet']), // P: ¿Tiene tablet?
+      getValue(payload, normalizedPayload, ['experienciaVentas', 'experiencia_ventas', 'experiencia en ventas']), // Q: Experiencia en ventas
+      getValue(payload, normalizedPayload, ['aplicacion', 'aplicación'], 'Web') // R: Aplicación
     ];
 
     sheet.appendRow(rowData);
@@ -129,7 +130,7 @@ function normalizePayloadKeys(source) {
   var out = {};
   for (var key in source) {
     if (source.hasOwnProperty(key)) {
-      out[normalizeKeyName(key)] = source[key];
+      out[normalizeKeyName(key)] = normalizeIncomingValue(source[key]);
     }
   }
 
@@ -141,7 +142,7 @@ function getValue(source, normalizedSource, keys, defaultValue) {
     var key = keys[i];
     var normalizedKey = normalizeKeyName(key);
 
-    var direct = source[key];
+    var direct = normalizeIncomingValue(source[key]);
     var normalized = normalizedSource[normalizedKey];
     var value = direct !== undefined ? direct : normalized;
 
@@ -153,9 +154,21 @@ function getValue(source, normalizedSource, keys, defaultValue) {
   return defaultValue !== undefined ? defaultValue : '';
 }
 
+function normalizeIncomingValue(value) {
+  if (Array.isArray(value)) {
+    return value.join(', ');
+  }
+
+  if (value !== null && typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+
+  return value;
+}
+
 function ensureHeaders(sheet) {
   var expected = [
-    'Fecha', 'Nombre', 'Apellido', 'Cédula', 'Teléfono', 'Marca', 'Modelo', 'Año', 'Placa',
+    'Fecha', 'Nombre', 'Apellido', 'Cédula', 'Teléfono', 'Correo del conductor', 'Marca', 'Modelo', 'Año', 'Placa',
     'Plataformas', 'Horas por día', 'Días por semana', 'Ciudad', 'Horario',
     '¿Tiene tablet?', 'Experiencia en ventas', 'Aplicación'
   ];
@@ -166,14 +179,29 @@ function ensureHeaders(sheet) {
     return;
   }
 
-  var current = sheet.getRange(1, 1, 1, expected.length).getValues()[0];
-  var isHeaderRow = expected.some(function(value, idx) {
-    return String(current[idx] || '').trim() === value;
+  var firstRowWidth = Math.max(sheet.getLastColumn(), expected.length);
+  var current = sheet.getRange(1, 1, 1, firstRowWidth).getValues()[0];
+  var cleanCurrent = current.map(function(cell) { return String(cell || '').trim(); });
+  var headerMatches = expected.every(function(value, idx) {
+    return cleanCurrent[idx] === value;
   });
 
-  if (!isHeaderRow && sheet.getLastRow() === 1 && String(sheet.getRange(1, 1).getValue()).trim() === '') {
+  if (headerMatches) {
+    return;
+  }
+
+  var hasDataAfterHeader = sheet.getLastRow() > 1;
+  if (!hasDataAfterHeader) {
     sheet.getRange(1, 1, 1, expected.length).setValues([expected]);
     sheet.getRange(1, 1, 1, expected.length).setFontWeight('bold');
+    return;
+  }
+
+  // Si ya hay datos, solo agrega encabezados faltantes sin alterar el orden existente.
+  for (var i = 0; i < expected.length; i++) {
+    if (cleanCurrent[i] !== expected[i]) {
+      sheet.getRange(1, i + 1).setValue(expected[i]).setFontWeight('bold');
+    }
   }
 }
 
@@ -195,6 +223,7 @@ function enviarEmailNotificacion(data) {
       'Nombre: ' + (data.nombre || '') + ' ' + (data.apellido || '') + '\n' +
       'Cédula: ' + (data.cedula || '') + '\n' +
       'Teléfono: ' + (data.telefono || '') + '\n\n' +
+      'Correo: ' + (data.correoConductor || data.correo_conductor || data.correo || data.email || '') + '\n\n' +
       'DATOS DEL VEHÍCULO:\n' +
       'Marca: ' + (data.marca || '') + '\n' +
       'Modelo: ' + (data.modelo || '') + '\n' +
