@@ -15,6 +15,7 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName('Registros TAD') || ss.getActiveSheet();
     var payload = parsePayload(e);
+    var normalizedPayload = normalizePayloadKeys(payload);
 
     if (!payload || Object.keys(payload).length === 0) {
       return buildResponse('error', 'No se recibieron datos del formulario');
@@ -25,22 +26,22 @@ function doPost(e) {
     // Mapeo tolerante a variaciones de nombres de campos.
     var rowData = [
       new Date(),                                       // A: Fecha
-      getValue(payload, ['nombre']),                    // B: Nombre
-      getValue(payload, ['apellido']),                  // C: Apellido
-      getValue(payload, ['cedula']),                    // D: Cédula
-      getValue(payload, ['telefono', 'tel']),           // E: Teléfono
-      getValue(payload, ['marca']),                     // F: Marca
-      getValue(payload, ['modelo']),                    // G: Modelo
-      getValue(payload, ['ano', 'año']),                // H: Año
-      getValue(payload, ['placa']),                     // I: Placa
-      getValue(payload, ['plataformas', 'plataforma']), // J: Plataformas
-      getValue(payload, ['horasDiarias', 'horas_diarias', 'horas_por_dia']), // K: Horas por día
-      getValue(payload, ['diasSemana', 'dias_semana', 'dias_por_semana']), // L: Días por semana
-      getValue(payload, ['ciudad']),                    // M: Ciudad
-      getValue(payload, ['horario']),                   // N: Horario
-      getValue(payload, ['tieneTablet', 'tiene_tablet']), // O: ¿Tiene tablet?
-      getValue(payload, ['experienciaVentas', 'experiencia_ventas']), // P: Experiencia en ventas
-      getValue(payload, ['aplicacion', 'aplicación'], 'Web') // Q: Aplicación
+      getValue(payload, normalizedPayload, ['nombre']),                    // B: Nombre
+      getValue(payload, normalizedPayload, ['apellido']),                  // C: Apellido
+      getValue(payload, normalizedPayload, ['cedula']),                    // D: Cédula
+      getValue(payload, normalizedPayload, ['telefono', 'tel']),           // E: Teléfono
+      getValue(payload, normalizedPayload, ['marca']),                     // F: Marca
+      getValue(payload, normalizedPayload, ['modelo']),                    // G: Modelo
+      getValue(payload, normalizedPayload, ['ano', 'año']),                // H: Año
+      getValue(payload, normalizedPayload, ['placa']),                     // I: Placa
+      getValue(payload, normalizedPayload, ['plataformas', 'plataforma']), // J: Plataformas
+      getValue(payload, normalizedPayload, ['horasDiarias', 'horas_diarias', 'horas_por_dia', 'horas por dia']), // K: Horas por día
+      getValue(payload, normalizedPayload, ['diasSemana', 'dias_semana', 'dias_por_semana', 'dias por semana']), // L: Días por semana
+      getValue(payload, normalizedPayload, ['ciudad']),                    // M: Ciudad
+      getValue(payload, normalizedPayload, ['horario']),                   // N: Horario
+      getValue(payload, normalizedPayload, ['tieneTablet', 'tiene_tablet', 'tiene tablet']), // O: ¿Tiene tablet?
+      getValue(payload, normalizedPayload, ['experienciaVentas', 'experiencia_ventas', 'experiencia en ventas']), // P: Experiencia en ventas
+      getValue(payload, normalizedPayload, ['aplicacion', 'aplicación'], 'Web') // Q: Aplicación
     ];
 
     sheet.appendRow(rowData);
@@ -116,11 +117,36 @@ function parseFormEncoded(raw) {
   return out;
 }
 
-function getValue(source, keys, defaultValue) {
+function normalizeKeyName(key) {
+  return String(key || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function normalizePayloadKeys(source) {
+  var out = {};
+  for (var key in source) {
+    if (source.hasOwnProperty(key)) {
+      out[normalizeKeyName(key)] = source[key];
+    }
+  }
+
+  return out;
+}
+
+function getValue(source, normalizedSource, keys, defaultValue) {
   for (var i = 0; i < keys.length; i++) {
     var key = keys[i];
-    if (source[key] !== undefined && source[key] !== null && String(source[key]).trim() !== '') {
-      return source[key];
+    var normalizedKey = normalizeKeyName(key);
+
+    var direct = source[key];
+    var normalized = normalizedSource[normalizedKey];
+    var value = direct !== undefined ? direct : normalized;
+
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      return value;
     }
   }
 

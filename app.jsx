@@ -285,6 +285,42 @@ function RegisterView({ navigateTo }) {
     setStep((s) => Math.min(3, s + 1));
   };
 
+  const submitWithHiddenForm = (payload) => {
+    return new Promise((resolve, reject) => {
+      try {
+        const iframe = document.createElement('iframe');
+        iframe.name = `sheet-target-${Date.now()}`;
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = scriptURL;
+        form.target = iframe.name;
+        form.style.display = 'none';
+
+        Object.entries(payload).forEach(([key, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = value == null ? '' : String(value);
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+
+        setTimeout(() => {
+          form.remove();
+          iframe.remove();
+          resolve();
+        }, 1200);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
   const submitRegister = async () => {
     setSubmitMessage('');
 
@@ -307,24 +343,10 @@ function RegisterView({ navigateTo }) {
         requestId: String(Date.now()),
       };
 
-      const encodedPayload = new URLSearchParams(payload).toString();
+      // Envío principal con formulario oculto (más estable con Google Apps Script Web Apps).
+      await submitWithHiddenForm(payload);
 
-      await fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-        },
-        body: encodedPayload,
-      });
-
-      // Fallback adicional para entornos que bloquean el POST no-cors en la redirección de Apps Script.
-      if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
-        var beaconData = new Blob([encodedPayload], { type: 'application/x-www-form-urlencoded;charset=UTF-8' });
-        navigator.sendBeacon(scriptURL, beaconData);
-      }
-
-      setSubmitMessage('Registro enviado. Estamos validando tu información.');
+      setSubmitMessage('Registro enviado correctamente.');
       navigateTo('login');
     } catch (error) {
       setSubmitMessage(`Error al enviar: ${error.message}`);
