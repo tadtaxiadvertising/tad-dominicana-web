@@ -162,8 +162,8 @@ function LandingView({ navigateTo }) {
 }
 
 function Calculator() {
-  const [ads, setAds] = useState(6);
-  const [sales, setSales] = useState(2);
+  const [ads, setAds] = useState(0);
+  const [sales, setSales] = useState(0);
   const total = ads * financeData.pagoPorAnuncio + sales * financeData.comisionVenta;
 
   return (
@@ -245,7 +245,7 @@ function RegisterView({ navigateTo }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
 
-  const scriptURL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || '';
+  const scriptURL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbyF5Sk3R51l0J3bP5lgM2_MV6Qs47Wo-a8wQFme5cBpaNUnlH85h5Z37P6_2fXZRDVh/exec';
 
   const updateField = (e) => {
     const { name, value } = e.target;
@@ -257,24 +257,14 @@ function RegisterView({ navigateTo }) {
     setIsSubmitting(true);
 
     try {
-      if (!scriptURL) {
-        setSubmitMessage('Registro completado localmente. Agrega VITE_GOOGLE_SCRIPT_URL para guardar en Sheets.');
-        navigateTo('login');
-        return;
-      }
-
-      const response = await fetch(scriptURL, {
+      await fetch(scriptURL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         },
         body: new URLSearchParams(formData).toString(),
       });
-
-      const text = await response.text();
-      if (!response.ok) {
-        throw new Error(text || 'No se pudo enviar el formulario');
-      }
 
       setSubmitMessage('Registro enviado correctamente.');
       navigateTo('login');
