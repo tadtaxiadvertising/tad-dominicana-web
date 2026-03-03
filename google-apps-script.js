@@ -1,31 +1,40 @@
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  
-  // Parsear los datos del request
-  var data = JSON.parse(e.postData.contents);
-  
-  // Agregar una nueva fila con los datos
-  sheet.appendRow([
-    new Date(),                    // Fecha
-    data.nombre || '',             // Nombre
-    data.apellido || '',           // Apellido
-    data.cedula || '',             // Cédula
-    data.telefono || '',           // Teléfono
-    data.marca || '',              // Marca
-    data.modelo || '',             // Modelo
-    data.ano || '',                // Año
-    data.placa || '',              // Placa
-    data.aplicacion || 'Web'       // Aplicación (Web, WhatsApp, etc.)
-  ]);
-  
-  // Retornar respuesta exitosa
-  return ContentService
-    .createTextOutput(JSON.stringify({result: 'success', message: 'Datos guardados'}))
-    .setMimeType(ContentService.MimeType.JSON);
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // Si e o e.parameter no existen, lanzamos error controlado
+    if (!e || !e.parameter) {
+      return ContentService.createTextOutput("Error: No se recibieron parámetros").setMimeType(ContentService.MimeType.TEXT);
+    }
+    
+    var rowData = [
+      new Date(),                              // Fecha - A
+      e.parameter.nombre || "",                // Nombre - B
+      e.parameter.apellido || "",              // Apellido - C
+      e.parameter.cedula || "",                // Cédula - D
+      e.parameter.telefono || "",              // Teléfono - E
+      e.parameter.marca || "",                 // Marca - F
+      e.parameter.modelo || "",                // Modelo - G
+      e.parameter.ano || "",                   // Año - H
+      e.parameter.placa || "",                 // Placa - I
+      e.parameter.plataformas || "",           // Plataformas - J
+      e.parameter.horasDiarias || "",          // Horas por día - K
+      e.parameter.diasSemana || "",            // Días por semana - L
+      e.parameter.ciudad || "",                // Ciudad - M
+      e.parameter.horario || "",               // Horario - N
+      e.parameter.tieneTablet || "",           // ¿Tiene tablet? - O
+      e.parameter.experienciaVentas || "",     // Experiencia en ventas - P
+      e.parameter.aplicacion || "Web"          // Aplicación - Q
+    ];
+    
+    sheet.appendRow(rowData);
+    
+    return ContentService.createTextOutput("Éxito").setMimeType(ContentService.MimeType.TEXT);
+  } catch (err) {
+    return ContentService.createTextOutput("Error interno: " + err.message).setMimeType(ContentService.MimeType.TEXT);
+  }
 }
 
 function doGet(e) {
-  return ContentService
-    .createTextOutput(JSON.stringify({status: 'ok', message: 'TAD Form Handler activo'}))
-    .setMimeType(ContentService.MimeType.JSON);
+  return doPost(e);
 }
