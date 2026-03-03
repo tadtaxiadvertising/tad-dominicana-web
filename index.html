@@ -200,6 +200,7 @@
                 apellido: '',
                 cedula: '',
                 telefono: '',
+                correo: '',
                 // Paso 2: Datos del Vehículo
                 marca: '',
                 modelo: '',
@@ -256,6 +257,7 @@
                 params.append('apellido', formData.apellido);
                 params.append('cedula', formData.cedula);
                 params.append('telefono', formData.telefono);
+                params.append('correo', formData.correo);
                 params.append('marca', formData.marca);
                 params.append('modelo', formData.modelo);
                 params.append('ano', formData.ano);
@@ -358,6 +360,13 @@
                                         placeholder="Teléfono" 
                                         value={formData.telefono}
                                         onChange={(e) => handleInputChange('telefono', e.target.value)}
+                                        className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-4 focus:outline-none focus:border-yellow-500" 
+                                    />
+                                    <input 
+                                        type="email" 
+                                        placeholder="Correo electrónico (opcional)" 
+                                        value={formData.correo}
+                                        onChange={(e) => handleInputChange('correo', e.target.value)}
                                         className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 focus:outline-none focus:border-yellow-500" 
                                     />
                                     <button type="button" onClick={nextStep} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-full transition">Siguiente</button>
