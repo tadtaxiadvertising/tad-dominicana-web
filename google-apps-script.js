@@ -5,6 +5,47 @@
 // y guardarlos en Google Sheets automáticamente
 // ============================================
 
+var HEADERS = [
+  'Fecha',
+  'Nombre',
+  'Apellido',
+  'Cédula',
+  'Teléfono',
+  'Correo del conductor',
+  'Marca',
+  'Modelo',
+  'Año',
+  'Placa',
+  'Plataformas',
+  'Horas por día',
+  'Días por semana',
+  'Ciudad',
+  'Horario',
+  '¿Tiene tablet?',
+  'Experiencia en ventas',
+  'Aplicación'
+];
+
+var LEGACY_HEADERS_WITHOUT_EMAIL = [
+  'Fecha',
+  'Nombre',
+  'Apellido',
+  'Cédula',
+  'Teléfono',
+  'Marca',
+  'Modelo',
+  'Año',
+  'Placa',
+  'Plataformas',
+  'Horas por día',
+  'Días por semana',
+  'Ciudad',
+  'Horario',
+  '¿Tiene tablet?',
+  'Experiencia en ventas',
+  'Aplicación'
+];
+
 /**
  * Soporta payloads enviados como:
  * - query params / x-www-form-urlencoded (e.parameter)
@@ -15,7 +56,6 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName('Registros TAD') || ss.getActiveSheet();
     var payload = parsePayload(e);
-    var normalizedPayload = normalizePayloadKeys(payload);
 
     if (!payload || Object.keys(payload).length === 0) {
       return buildResponse('error', 'No se recibieron datos del formulario');
@@ -23,32 +63,31 @@ function doPost(e) {
 
     ensureHeaders(sheet);
 
+    var normalizedPayload = normalizePayloadKeys(payload);
+
     // Mapeo tolerante a variaciones de nombres de campos.
     var rowData = [
-      new Date(),                                       // A: Fecha
-      getValue(payload, normalizedPayload, ['nombre']),                    // B: Nombre
-      getValue(payload, normalizedPayload, ['apellido']),                  // C: Apellido
-      getValue(payload, normalizedPayload, ['cedula']),                    // D: Cédula
-      getValue(payload, normalizedPayload, ['telefono', 'tel']),           // E: Teléfono
-      getValue(payload, normalizedPayload, ['correoConductor', 'correo_conductor', 'correo', 'email', 'e-mail']), // F: Correo del conductor
-      getValue(payload, normalizedPayload, ['marca']),                     // G: Marca
-      getValue(payload, normalizedPayload, ['modelo']),                    // H: Modelo
-      getValue(payload, normalizedPayload, ['ano', 'año']),                // I: Año
-      getValue(payload, normalizedPayload, ['placa']),                     // J: Placa
-      getValue(payload, normalizedPayload, ['plataformas', 'plataforma']), // K: Plataformas
-      getValue(payload, normalizedPayload, ['horasDiarias', 'horas_diarias', 'horas_por_dia', 'horas por dia']), // L: Horas por día
-      getValue(payload, normalizedPayload, ['diasSemana', 'dias_semana', 'dias_por_semana', 'dias por semana']), // M: Días por semana
-      getValue(payload, normalizedPayload, ['ciudad']),                    // N: Ciudad
-      getValue(payload, normalizedPayload, ['horario']),                   // O: Horario
-      getValue(payload, normalizedPayload, ['tieneTablet', 'tiene_tablet', 'tiene tablet']), // P: ¿Tiene tablet?
-      getValue(payload, normalizedPayload, ['experienciaVentas', 'experiencia_ventas', 'experiencia en ventas']), // Q: Experiencia en ventas
-      getValue(payload, normalizedPayload, ['aplicacion', 'aplicación'], 'Web') // R: Aplicación
+      new Date(),
+      getValue(payload, normalizedPayload, ['nombre']),
+      getValue(payload, normalizedPayload, ['apellido']),
+      getValue(payload, normalizedPayload, ['cedula']),
+      getValue(payload, normalizedPayload, ['telefono', 'tel']),
+      getValue(payload, normalizedPayload, ['correoConductor', 'correo_conductor', 'correo', 'email', 'e-mail']),
+      getValue(payload, normalizedPayload, ['marca']),
+      getValue(payload, normalizedPayload, ['modelo']),
+      getValue(payload, normalizedPayload, ['ano', 'año']),
+      getValue(payload, normalizedPayload, ['placa']),
+      getValue(payload, normalizedPayload, ['plataformas', 'plataforma']),
+      getValue(payload, normalizedPayload, ['horasDiarias', 'horas_diarias', 'horas_por_dia', 'horas por dia']),
+      getValue(payload, normalizedPayload, ['diasSemana', 'dias_semana', 'dias_por_semana', 'dias por semana']),
+      getValue(payload, normalizedPayload, ['ciudad']),
+      getValue(payload, normalizedPayload, ['horario']),
+      getValue(payload, normalizedPayload, ['tieneTablet', 'tiene_tablet', 'tiene tablet']),
+      getValue(payload, normalizedPayload, ['experienciaVentas', 'experiencia_ventas', 'experiencia en ventas']),
+      getValue(payload, normalizedPayload, ['aplicacion', 'aplicación'], 'Web')
     ];
 
     sheet.appendRow(rowData);
-
-    var lastRow = sheet.getLastRow();
-    sheet.getRange(lastRow, 1).setFontWeight('bold');
 
     return buildResponse('success', 'Registro guardado exitosamente');
   } catch (error) {
@@ -167,42 +206,53 @@ function normalizeIncomingValue(value) {
 }
 
 function ensureHeaders(sheet) {
-  var expected = [
-    'Fecha', 'Nombre', 'Apellido', 'Cédula', 'Teléfono', 'Correo del conductor', 'Marca', 'Modelo', 'Año', 'Placa',
-    'Plataformas', 'Horas por día', 'Días por semana', 'Ciudad', 'Horario',
-    '¿Tiene tablet?', 'Experiencia en ventas', 'Aplicación'
-  ];
-
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(expected);
-    sheet.getRange(1, 1, 1, expected.length).setFontWeight('bold');
+    sheet.appendRow(HEADERS);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
     return;
   }
 
-  var firstRowWidth = Math.max(sheet.getLastColumn(), expected.length);
-  var current = sheet.getRange(1, 1, 1, firstRowWidth).getValues()[0];
-  var cleanCurrent = current.map(function(cell) { return String(cell || '').trim(); });
-  var headerMatches = expected.every(function(value, idx) {
-    return cleanCurrent[idx] === value;
+  var width = Math.max(sheet.getLastColumn(), HEADERS.length);
+  var firstRow = sheet.getRange(1, 1, 1, width).getValues()[0];
+  var cleanCurrent = firstRow.map(function(cell) {
+    return String(cell || '').trim();
   });
 
-  if (headerMatches) {
+  var matchesCurrentSchema = headersMatch(cleanCurrent, HEADERS);
+  if (matchesCurrentSchema) {
+    return;
+  }
+
+  var matchesLegacySchema = headersMatch(cleanCurrent, LEGACY_HEADERS_WITHOUT_EMAIL);
+  if (matchesLegacySchema) {
+    // Inserta nueva columna de correo en la posición correcta (columna 6),
+    // moviendo datos existentes para no desalinear registros históricos.
+    sheet.insertColumnBefore(6);
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
     return;
   }
 
   var hasDataAfterHeader = sheet.getLastRow() > 1;
   if (!hasDataAfterHeader) {
-    sheet.getRange(1, 1, 1, expected.length).setValues([expected]);
-    sheet.getRange(1, 1, 1, expected.length).setFontWeight('bold');
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
     return;
   }
 
-  // Si ya hay datos, solo agrega encabezados faltantes sin alterar el orden existente.
-  for (var i = 0; i < expected.length; i++) {
-    if (cleanCurrent[i] !== expected[i]) {
-      sheet.getRange(1, i + 1).setValue(expected[i]).setFontWeight('bold');
+  // No forzamos sobreescritura con datos existentes y encabezados no reconocidos.
+  // Solo registramos para revisión manual y evitamos dañar el mapeo histórico.
+  Logger.log('Encabezados no reconocidos en la hoja. Revisar manualmente primera fila: ' + JSON.stringify(cleanCurrent));
+}
+
+function headersMatch(currentRow, expectedRow) {
+  for (var i = 0; i < expectedRow.length; i++) {
+    if (String(currentRow[i] || '').trim() !== expectedRow[i]) {
+      return false;
     }
   }
+
+  return true;
 }
 
 function buildResponse(status, message) {
@@ -222,7 +272,7 @@ function enviarEmailNotificacion(data) {
       'DATOS PERSONALES:\n' +
       'Nombre: ' + (data.nombre || '') + ' ' + (data.apellido || '') + '\n' +
       'Cédula: ' + (data.cedula || '') + '\n' +
-      'Teléfono: ' + (data.telefono || '') + '\n\n' +
+      'Teléfono: ' + (data.telefono || '') + '\n' +
       'Correo: ' + (data.correoConductor || data.correo_conductor || data.correo || data.email || '') + '\n\n' +
       'DATOS DEL VEHÍCULO:\n' +
       'Marca: ' + (data.marca || '') + '\n' +
