@@ -262,6 +262,18 @@ function RegisterView({ navigateTo }) {
     return fields.some((field) => !String(formData[field] || '').trim());
   };
 
+  const isPlatformSelected = (platform) =>
+    formData.plataformas.split(',').map((item) => item.trim()).filter(Boolean).includes(platform);
+
+  const togglePlatform = (platform) => {
+    const selected = formData.plataformas.split(',').map((item) => item.trim()).filter(Boolean);
+    const updated = selected.includes(platform)
+      ? selected.filter((item) => item !== platform)
+      : [...selected, platform];
+
+    setFormData((prev) => ({ ...prev, plataformas: updated.join(', ') }));
+  };
+
   const goToNextStep = () => {
     if (stepHasMissingFields(step)) {
       setSubmitMessage('Completa todas las preguntas de este paso para continuar.');
@@ -274,6 +286,12 @@ function RegisterView({ navigateTo }) {
 
   const submitRegister = async () => {
     setSubmitMessage('');
+
+    if (stepHasMissingFields(1) || stepHasMissingFields(2)) {
+      setSubmitMessage('Aún faltan respuestas obligatorias antes de enviar.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -332,7 +350,19 @@ function RegisterView({ navigateTo }) {
             <input name="ano" value={formData.ano} onChange={updateField} placeholder="Año" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <input name="placa" value={formData.placa} onChange={updateField} placeholder="Placa" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <label className="block text-sm text-gray-300">¿En qué plataforma(s) trabajas actualmente?</label>
-            <input name="plataformas" value={formData.plataformas} onChange={updateField} placeholder="Ej: Uber, InDrive, DiDi" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {['Uber', 'InDrive', 'DiDi', 'Otra'].map((platform) => (
+                <button
+                  key={platform}
+                  type="button"
+                  onClick={() => togglePlatform(platform)}
+                  className={`rounded-xl border px-3 py-2 text-sm transition ${isPlatformSelected(platform) ? 'border-[#FFC107] bg-[#FFC107]/20 text-[#FFC107]' : 'border-gray-700 bg-gray-900 text-gray-300 hover:border-gray-500'}`}
+                >
+                  {platform}
+                </button>
+              ))}
+            </div>
+            <input name="plataformas" value={formData.plataformas} onChange={updateField} placeholder="Puedes editar o agregar más plataformas aquí" className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3" />
             <label className="block text-sm text-gray-300">¿Cuántas horas conduces por día?</label>
             <select name="horasDiarias" value={formData.horasDiarias} onChange={updateField} className="w-full rounded-xl border border-gray-700 bg-gray-900 px-4 py-3">
               <option value="">Selecciona un rango</option>

@@ -85,10 +85,32 @@ function parsePayload(e) {
       } catch (_) {
         // Si no se puede parsear JSON, se mantiene e.parameter.
       }
+    } else {
+      // Fallback para casos no-cors/text/plain que llegan como querystring en el body.
+      merged = Object.assign(merged, parseFormEncoded(raw));
     }
   }
 
   return merged;
+}
+
+function parseFormEncoded(raw) {
+  var out = {};
+  if (!raw) return out;
+
+  var parts = String(raw).split('&');
+  for (var i = 0; i < parts.length; i++) {
+    var piece = parts[i];
+    if (!piece) continue;
+
+    var kv = piece.split('=');
+    var key = decodeURIComponent((kv[0] || '').replace(/\+/g, ' '));
+    var value = decodeURIComponent((kv.slice(1).join('=') || '').replace(/\+/g, ' '));
+
+    if (key) out[key] = value;
+  }
+
+  return out;
 }
 
 function getValue(source, keys, defaultValue) {
