@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TAD Dominicana - Tu Vehículo, Tu Valla Digital</title>
     <meta name="description" content="Gana dinero extra mientras conduces. Instalamos tablets de 10 pulgadas para entretener a tus pasajeros y generar ingresos por publicidad." />
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; connect-src 'self' https://script.google.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com;">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+    
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -24,9 +32,74 @@
     <div id="root"></div>
     
     <script type="text/babel">
-        // Google Apps Script URL
-        const scriptURL = "https://script.google.com/macros/s/AKfycbyF5Sk3R51l0J3bP5lgM2_MV6Qs47Wo-a8wQFme5cBpaNUnlH85h5Z37P6_2fXZRDVh/exec";
-        const whatsappPhone = "18495043872";
+        // ============================================
+        // SEGURIDAD - TAD DOMINICANA
+        // ============================================
+        
+        // URL ofuscada (Base64) para Google Apps Script
+        const SCRIPT_URL_B64 = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyby9zL0FLZnljYnlGNVNrM1I1MWwwSjNiUDVsZ00yX01WNlFzNDdXby1hOHdRRm1lNWNCcGFOVW5sSDg1aDVaMzdQNl8yZlhaUkRWaC9leGVj";
+        const scriptURL = atob(SCRIPT_URL_B64);
+        
+        // WhatsApp (ofuscado)
+        const WHATSAPP_B64 = "MTg0OTUwNDM4NzI=";
+        const whatsappPhone = atob(WHATSAPP_B64);
+        
+        // Rate Limiting - Prevenir spam
+        const RATE_LIMIT_MS = 60000; // 1 minuto entre envíos
+        const STORAGE_KEY = 'tad_last_submit';
+        
+        const checkRateLimit = () => {
+            const lastSubmit = localStorage.getItem(STORAGE_KEY);
+            if (lastSubmit) {
+                const elapsed = Date.now() - parseInt(lastSubmit);
+                if (elapsed < RATE_LIMIT_MS) {
+                    const waitTime = Math.ceil((RATE_LIMIT_MS - elapsed) / 1000);
+                    return { allowed: false, waitTime };
+                }
+            }
+            return { allowed: true };
+        };
+        
+        const setRateLimit = () => {
+            localStorage.setItem(STORAGE_KEY, Date.now().toString());
+        };
+        
+        // Sanitización de inputs - Prevenir XSS
+        const sanitizeInput = (input) => {
+            if (typeof input !== 'string') return input;
+            return input
+                .replace(/[<>]/g, '') // Eliminar < y >
+                .replace(/javascript:/gi, '') // Eliminar javascript:
+                .replace(/on\w+=/gi, '') // Eliminar eventos onclick, onload, etc.
+                .trim()
+                .substring(0, 500); // Limitar longitud
+        };
+        
+        // Validación de email
+        const isValidEmail = (email) => {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        };
+        
+        // Validación de teléfono (RD)
+        const isValidPhone = (phone) => {
+            const re = /^(\+1|1)?[23456789]\d{9}$/;
+            return re.test(phone.replace(/[\s\-\(\)]/g, ''));
+        };
+        
+        // Validación de cédula (RD) - 11 dígitos
+        const isValidCedula = (cedula) => {
+            const clean = cedula.replace(/[\-\s]/g, '');
+            return /^\d{11}$/.test(clean);
+        };
+        
+        // Validación de placa (RD) - 3 letras + 3 números o 3 letras + 4 números
+        const isValidPlaca = (placa) => {
+            const re = /^[A-Z]{3}\d{3,4}$/i;
+            return re.test(placa.replace(/[\-\s]/g, ''));
+        };
+        
+        // ============================================
 
         // Logo Component
         const LogoTAD = () => (
@@ -227,20 +300,47 @@
 
             const nextStep = React.useCallback(() => {
                 if (step === 1) {
+                    // Validar campos requeridos
                     if (!formData.nombre || !formData.apellido || !formData.cedula || !formData.telefono) {
-                        alert('Por favor completa todos los campos');
+                        alert('⚠️ Por favor completa todos los campos obligatorios');
+                        return;
+                    }
+                    // Validar cédula (11 dígitos)
+                    if (!isValidCedula(formData.cedula)) {
+                        alert('⚠️ La cédula debe tener 11 dígitos numéricos');
+                        return;
+                    }
+                    // Validar teléfono
+                    if (!isValidPhone(formData.telefono)) {
+                        alert('⚠️ Ingresa un teléfono válido (ej: +18495043872)');
+                        return;
+                    }
+                    // Validar email si está presente
+                    if (formData.correo && !isValidEmail(formData.correo)) {
+                        alert('⚠️ El email no es válido');
                         return;
                     }
                 }
                 if (step === 2) {
                     if (!formData.marca || !formData.modelo || !formData.ano || !formData.placa) {
-                        alert('Por favor completa todos los campos');
+                        alert('⚠️ Por favor completa todos los campos del vehículo');
+                        return;
+                    }
+                    // Validar año (1990-2026)
+                    const ano = parseInt(formData.ano);
+                    if (ano < 1990 || ano > 2026) {
+                        alert('⚠️ El año debe estar entre 1990 y 2026');
+                        return;
+                    }
+                    // Validar placa
+                    if (!isValidPlaca(formData.placa)) {
+                        alert('⚠️ La placa debe ser formato: ABC123 o ABC1234');
                         return;
                     }
                 }
                 if (step === 3) {
                     if (!formData.plataformas || !formData.horasDiarias || !formData.diasSemana || !formData.ciudad || !formData.horario) {
-                        alert('Por favor completa todos los campos');
+                        alert('⚠️ Por favor completa todos los campos laborales');
                         return;
                     }
                 }
@@ -249,29 +349,41 @@
 
             const handleSubmit = React.useCallback(async (e) => {
                 e.preventDefault();
+                
+                // Verificar rate limiting
+                const rateCheck = checkRateLimit();
+                if (!rateCheck.allowed) {
+                    alert(`⚠️ Por favor espera ${rateCheck.waitTime} segundos antes de enviar otro formulario`);
+                    return;
+                }
+                
                 setLoading(true);
                 
-                // Preparar datos como URLSearchParams (lo que espera e.parameter)
-                const params = new URLSearchParams();
-                params.append('nombre', formData.nombre);
-                params.append('apellido', formData.apellido);
-                params.append('cedula', formData.cedula);
-                params.append('telefono', formData.telefono);
-                params.append('correo', formData.correo);
-                params.append('marca', formData.marca);
-                params.append('modelo', formData.modelo);
-                params.append('ano', formData.ano);
-                params.append('placa', formData.placa);
-                params.append('plataformas', formData.plataformas);
-                params.append('horasDiarias', formData.horasDiarias);
-                params.append('diasSemana', formData.diasSemana);
-                params.append('ciudad', formData.ciudad);
-                params.append('horario', formData.horario);
-                params.append('tieneTablet', formData.tieneTablet);
-                params.append('experienciaVentas', formData.experienciaVentas);
-                params.append('aplicacion', 'Web');
+                // Sanitizar todos los datos antes de enviar
+                const sanitizedData = {
+                    nombre: sanitizeInput(formData.nombre),
+                    apellido: sanitizeInput(formData.apellido),
+                    cedula: sanitizeInput(formData.cedula.replace(/[\-\s]/g, '')),
+                    telefono: sanitizeInput(formData.telefono.replace(/[\s\-\(\)]/g, '')),
+                    correo: sanitizeInput(formData.correo.toLowerCase().trim()),
+                    marca: sanitizeInput(formData.marca),
+                    modelo: sanitizeInput(formData.modelo),
+                    ano: sanitizeInput(formData.ano),
+                    placa: sanitizeInput(formData.placa.toUpperCase().replace(/[\-\s]/g, '')),
+                    plataformas: sanitizeInput(formData.plataformas),
+                    horasDiarias: sanitizeInput(formData.horasDiarias),
+                    diasSemana: sanitizeInput(formData.diasSemana),
+                    ciudad: sanitizeInput(formData.ciudad),
+                    horario: sanitizeInput(formData.horario),
+                    tieneTablet: sanitizeInput(formData.tieneTablet),
+                    experienciaVentas: sanitizeInput(formData.experienciaVentas),
+                    aplicacion: 'Web'
+                };
                 
-                console.log('Enviando datos:', Object.fromEntries(params));
+                // Preparar datos como URLSearchParams
+                const params = new URLSearchParams(sanitizedData);
+                
+                console.log('🔒 Datos sanitizados enviados:', Object.fromEntries(params));
                 
                 try {
                     await fetch(scriptURL, {
@@ -285,10 +397,11 @@
                     
                     await new Promise(resolve => setTimeout(resolve, 500));
                     
-                    console.log('Datos enviados exitosamente');
+                    console.log('✅ Datos enviados exitosamente');
+                    setRateLimit(); // Activar rate limiting después de envío exitoso
                     setSubmitted(true);
                 } catch (error) {
-                    console.error('Error completo:', error);
+                    console.error('❌ Error completo:', error);
                     alert('Error al enviar: ' + error.message + '. Intenta de nuevo o contacta por WhatsApp.');
                 }
                 setLoading(false);
