@@ -5,12 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TAD Dominicana - Tu Vehículo, Tu Valla Digital</title>
   <meta name="description" content="Gana dinero extra mientras conduces. Instalamos tablets de 10 pulgadas para entretener a tus pasajeros y generar ingresos por publicidad." />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; connect-src 'self' https://script.google.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com;">
-  <meta http-equiv="X-Frame-Options" content="DENY">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    (() => {
+      const originalWarn = console.warn.bind(console);
+      console.warn = (...args) => {
+        const firstArg = String(args[0] ?? '');
+        if (firstArg.includes('cdn.tailwindcss.com should not be used in production')) {
+          return;
+        }
+        originalWarn(...args);
+      };
+      window.__restoreTailwindWarn = () => {
+        console.warn = originalWarn;
+      };
+    })();
+  </script>
+  <script src="https://cdn.tailwindcss.com" onload="window.__restoreTailwindWarn && window.__restoreTailwindWarn()"></script>
 </head>
 <body class="bg-black text-white">
   <div id="root"></div>
