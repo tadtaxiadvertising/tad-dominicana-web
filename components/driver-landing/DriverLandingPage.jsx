@@ -2,13 +2,14 @@ import HeroSection from './HeroSection';
 import ProcessSection from './ProcessSection';
 import EarningsCalculator from './EarningsCalculator';
 import FAQSection from './FAQSection';
+import RegisterSection from './RegisterSection';
 
 function TopNav() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#09090c]/92 backdrop-blur-xl">
       <div className="mx-auto flex min-h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="text-lg font-black uppercase text-white">
-          TAD <span className="text-[#FFD400]">Choferes</span>
+          TAD <span className="text-[#FFD400]">Drive</span>
         </div>
         <nav className="hidden items-center gap-6 md:flex">
           <a href="#como-funciona" className="text-[11px] font-black uppercase tracking-[0.18em] text-zinc-500 hover:text-white">Cómo funciona</a>
@@ -27,7 +28,7 @@ function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#09090c] py-10 text-center text-sm text-zinc-500">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p>TAD © 2026. Todos los derechos reservados.</p>
+        <p>TAD Drive © 2026. Todos los derechos reservados.</p>
         <p className="mt-2">Modelo comercial para choferes de apps y taxis de base en República Dominicana.</p>
       </div>
     </footer>
@@ -42,6 +43,7 @@ export default function DriverLandingPage() {
         <HeroSection />
         <ProcessSection />
         <EarningsCalculator />
+        <RegisterSection />
         <FAQSection />
       </main>
       <Footer />
