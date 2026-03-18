@@ -158,7 +158,7 @@ const LogoTAD = ({ className = 'w-32 h-auto' }) => (
 
 function ProgressTracker() {
   return (
-    <section className="py-10 md:py-14 border-t border-gray-800 bg-[#0f172a]">
+    <section className="py-10 md:py-14 border-t border-[#23232b] bg-[#0b0c10]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
           <div>
@@ -173,9 +173,9 @@ function ProgressTracker() {
           {activationSteps.map((item, index) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="relative rounded-2xl border border-gray-800 bg-gray-900/80 p-5 md:p-6 shadow-lg shadow-black/20">
+              <div key={item.title} className="relative rounded-[30px] border border-[#25252d] bg-[#121318] p-5 md:p-6 shadow-lg shadow-black/20">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#FFD700] text-gray-900">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] bg-[#FFD700] text-gray-900 shadow-[0_0_22px_rgba(255,215,0,0.28)]">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div>
@@ -183,7 +183,7 @@ function ProgressTracker() {
                     <p className="mt-1 text-base font-semibold text-white">{item.text}</p>
                   </div>
                 </div>
-                <div className="mt-4 h-2 w-full rounded-full bg-gray-800 overflow-hidden">
+                <div className="mt-4 h-2 w-full rounded-full bg-[#1e2027] overflow-hidden">
                   <div className="h-full rounded-full bg-gradient-to-r from-[#FFD700] to-yellow-300" style={{ width: `${(index + 1) * 33.33}%` }} />
                 </div>
               </div>
@@ -199,7 +199,7 @@ function FAQSection() {
   const [openItem, setOpenItem] = useState(0);
 
   return (
-    <section className="py-20 bg-gray-900 border-t border-gray-800">
+    <section className="py-20 bg-[#0d0e12] border-t border-[#23232b]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#FFD700]/20 bg-[#FFD700]/10 px-4 py-2 text-sm text-[#FFD700]">
@@ -216,7 +216,7 @@ function FAQSection() {
           {faqItems.map((item, index) => {
             const isOpen = openItem === index;
             return (
-              <div key={item.question} className="rounded-2xl border border-gray-800 bg-[#111827] overflow-hidden">
+              <div key={item.question} className="rounded-[28px] border border-[#25252d] bg-[#121318] overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setOpenItem(isOpen ? -1 : index)}
@@ -257,9 +257,11 @@ export default function TadLandingApp() {
   };
 
   return (
-    <div className="min-h-screen bg-[#111827] text-gray-200 font-sans selection:bg-[#FFD700] selection:text-gray-900 flex flex-col">
-      <nav className="sticky top-0 z-50 bg-[#111827]/90 backdrop-blur-md border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#09090c] text-gray-200 font-sans selection:bg-[#FFD700] selection:text-gray-900 flex flex-col relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,215,0,0.18),transparent_28%),radial-gradient(circle_at_top_right,rgba(56,189,248,0.08),transparent_22%),linear-gradient(180deg,#111114_0%,#09090c_100%)]" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 hidden xl:block w-[320px] border-r border-white/5 bg-[linear-gradient(180deg,rgba(255,215,0,0.08),rgba(255,215,0,0.02)_18%,rgba(255,255,255,0.01))]" />
+      <nav className="sticky top-0 z-50 bg-[#121216]/88 backdrop-blur-xl border-b border-[#2a2a31]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex justify-between items-center h-20">
             <div className="flex-shrink-0 cursor-pointer" onClick={() => navigateTo('landing')}>
               <LogoTAD />
@@ -267,9 +269,9 @@ export default function TadLandingApp() {
             <div className="hidden md:flex items-center space-x-8">
               {currentView === 'landing' && (
                 <>
-                  <a href="#como-funciona" className="text-sm font-medium hover:text-[#FFD700] transition-colors">Cómo Funciona</a>
-                  <a href="#ganancias" className="text-sm font-medium hover:text-[#FFD700] transition-colors">Calculadora</a>
-                  <a href="#faq" className="text-sm font-medium hover:text-[#FFD700] transition-colors">FAQ</a>
+                  <a href="#como-funciona" className="text-xs font-semibold uppercase tracking-[0.28em] text-gray-500 hover:text-[#FFD700] transition-colors">Cómo Funciona</a>
+                  <a href="#ganancias" className="text-xs font-semibold uppercase tracking-[0.28em] text-gray-500 hover:text-[#FFD700] transition-colors">Calculadora</a>
+                  <a href="#faq" className="text-xs font-semibold uppercase tracking-[0.28em] text-gray-500 hover:text-[#FFD700] transition-colors">FAQ</a>
                 </>
               )}
               {currentView === 'dashboard' ? (
@@ -277,7 +279,7 @@ export default function TadLandingApp() {
                   <LogOut className="w-4 h-4 mr-2" /> Cerrar Sesión
                 </button>
               ) : (
-                <button onClick={() => navigateTo('login')} className="bg-[#FFD700] text-gray-900 px-6 py-2.5 rounded-full font-bold text-sm hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_15px_rgba(255,215,0,0.3)]">
+                <button onClick={() => navigateTo('login')} className="border border-[#2e2e36] bg-[#17171c] text-[#FFD700] px-6 py-3 rounded-[22px] font-black text-xs uppercase tracking-[0.25em] hover:border-[#FFD700]/40 hover:bg-[#1b1b22] transition-all shadow-[0_0_30px_rgba(255,215,0,0.08)]">
                   Área del Conductor
                 </button>
               )}
@@ -290,7 +292,7 @@ export default function TadLandingApp() {
           </div>
         </div>
         {isMenuOpen && (
-          <div className="md:hidden bg-gray-900 border-b border-gray-800 animate-fade-in">
+          <div className="md:hidden bg-[#111114] border-b border-[#26262d] animate-fade-in">
             <div className="px-2 pt-2 pb-4 space-y-1 sm:px-3">
               {currentView === 'landing' && (
                 <>
@@ -318,7 +320,7 @@ export default function TadLandingApp() {
         {currentView === 'dashboard' && <DashboardView />}
       </main>
 
-      <footer className="bg-gray-900 border-t border-gray-800 py-8 mt-auto">
+      <footer className="bg-[#101014] border-t border-[#23232b] py-8 mt-auto relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <LogoTAD className="w-24 h-auto mx-auto mb-4 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
           <p className="text-gray-500 text-sm">
@@ -340,35 +342,73 @@ export default function TadLandingApp() {
 function LandingView({ navigateTo }) {
   return (
     <div className="animate-fade-in">
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FFD700]/5 to-transparent"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-            Tu Vehículo,<br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-yellow-200"> Tu Propia Valla Digital. </span>
-          </h1>
-          <p className="mt-4 text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+      <section className="relative py-20 lg:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,215,0,0.12),transparent_22%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent)]"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 xl:grid-cols-[1.15fr_0.85fr] gap-8 items-center">
+            <div className="text-center xl:text-left">
+              <div className="inline-flex items-center gap-3 rounded-full border border-[#2e2e36] bg-[#141419] px-4 py-2 text-xs font-semibold uppercase tracking-[0.32em] text-gray-400">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#FFD700] shadow-[0_0_16px_rgba(255,215,0,0.85)]" />
+                Plataforma TAD Driver Node
+              </div>
+              <h1 className="mt-6 text-4xl md:text-6xl font-black italic uppercase leading-[0.95] tracking-tight text-white">
+                Tu Vehículo,<br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fff7cc] via-[#FFD700] to-[#f5bf00]">Tu Valla Digital</span>
+              </h1>
+              <p className="mt-5 text-lg md:text-xl text-gray-400 max-w-2xl xl:max-w-xl mx-auto xl:mx-0 mb-10">
             Gana dinero extra mientras conduces. Instalamos tablets de 10" para entretener a tus pasajeros y generar ingresos por publicidad. El ecosistema más rentable para choferes en RD.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <button onClick={() => navigateTo('register')} className="w-full sm:w-auto bg-[#FFD700] text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,215,0,0.4)] flex items-center justify-center">
-              Comenzar a Ganar <ChevronRight className="ml-2 w-5 h-5" />
-            </button>
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center xl:justify-start items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button onClick={() => navigateTo('register')} className="w-full sm:w-auto bg-[#FFD700] text-gray-900 px-8 py-4 rounded-[24px] font-black text-sm uppercase tracking-[0.2em] hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,215,0,0.35)] flex items-center justify-center">
+                  Comenzar Ahora <ChevronRight className="ml-2 w-5 h-5" />
+                </button>
+                <a href="#faq" className="w-full sm:w-auto border border-[#2d2d35] bg-[#131318] px-8 py-4 rounded-[24px] text-sm font-black uppercase tracking-[0.2em] text-gray-300 hover:border-[#FFD700]/30 hover:text-white transition-all text-center">
+                  Ver FAQ
+                </a>
+              </div>
+            </div>
+            <div className="rounded-[32px] border border-[#2a2a31] bg-[#101014]/90 p-6 md:p-8 shadow-[0_40px_80px_rgba(0,0,0,0.45)]">
+              <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-5">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">Estado del sistema</p>
+                  <h3 className="mt-2 text-3xl font-black italic uppercase text-white">Driver Telemetry</h3>
+                </div>
+                <div className="rounded-2xl bg-[#FFD700] p-4 shadow-[0_0_24px_rgba(255,215,0,0.35)]">
+                  <Smartphone className="w-8 h-8 text-gray-900" />
+                </div>
+              </div>
+              <div className="mt-6 grid grid-cols-2 gap-4">
+                {[
+                  ['Pago anual', 'RD$6,000', 'Nominal'],
+                  ['Ganancia por anuncio', 'RD$500', 'Activo'],
+                  ['Activación', 'Remota', 'Online'],
+                  ['Soporte', 'WhatsApp', 'Directo'],
+                ].map(([label, value, chip]) => (
+                  <div key={label} className="rounded-[28px] border border-[#24242b] bg-[#0d0d12] p-5">
+                    <div className="inline-flex rounded-full border border-[#3a3100] bg-[#2a2200]/40 px-3 py-1 text-[11px] font-black uppercase tracking-[0.22em] text-[#FFD700]">
+                      {chip}
+                    </div>
+                    <p className="mt-6 text-xs font-semibold uppercase tracking-[0.3em] text-gray-500">{label}</p>
+                    <p className="mt-2 text-2xl font-black italic text-white">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <ProgressTracker />
 
-      <section id="como-funciona" className="py-20 bg-gray-900 border-y border-gray-800">
+      <section id="como-funciona" className="py-20 bg-[#0f1014] border-y border-[#23232b]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-white">El Modelo de Negocio</h2>
             <p className="mt-4 text-gray-400">Transparente, rentable y diseñado para tu beneficio.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-[#FFD700]/50 transition-all hover:-translate-y-2">
-              <div className="bg-gray-900 w-14 h-14 rounded-full flex items-center justify-center mb-6 border border-gray-700">
+            <div className="bg-[#131318] p-8 rounded-[30px] border border-[#25252d] hover:border-[#FFD700]/40 transition-all hover:-translate-y-2">
+              <div className="bg-[#0b0b0f] w-14 h-14 rounded-[20px] flex items-center justify-center mb-6 border border-[#26262d]">
                 <ShieldCheck className="w-7 h-7 text-[#FFD700]" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">1. Suscripción Anual</h3>
@@ -376,8 +416,8 @@ function LandingView({ navigateTo }) {
                 Inversión única de <span className="text-[#FFD700] font-bold">RD$6,000</span>. Cubre tu Kit Tecnológico (Tablet 10", Soporte, Cargador) y mantenimiento por 12 meses.
               </p>
             </div>
-            <div className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-[#FFD700]/50 transition-all hover:-translate-y-2 delay-100">
-              <div className="bg-gray-900 w-14 h-14 rounded-full flex items-center justify-center mb-6 border border-gray-700">
+            <div className="bg-[#131318] p-8 rounded-[30px] border border-[#25252d] hover:border-[#FFD700]/40 transition-all hover:-translate-y-2 delay-100">
+              <div className="bg-[#0b0b0f] w-14 h-14 rounded-[20px] flex items-center justify-center mb-6 border border-[#26262d]">
                 <Wrench className="w-7 h-7 text-[#FFD700]" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">2. Instalación Pro</h3>
@@ -385,8 +425,8 @@ function LandingView({ navigateTo }) {
                 Técnico a domicilio o en punto de encuentro. Instalación rápida, sin cables a la vista y lista para operar con FullyKiosk.
               </p>
             </div>
-            <div className="bg-gray-800/50 p-8 rounded-2xl border border-gray-700 hover:border-[#FFD700]/50 transition-all hover:-translate-y-2 delay-200">
-              <div className="bg-gray-900 w-14 h-14 rounded-full flex items-center justify-center mb-6 border border-gray-700">
+            <div className="bg-[#131318] p-8 rounded-[30px] border border-[#25252d] hover:border-[#FFD700]/40 transition-all hover:-translate-y-2 delay-200">
+              <div className="bg-[#0b0b0f] w-14 h-14 rounded-[20px] flex items-center justify-center mb-6 border border-[#26262d]">
                 <TrendingUp className="w-7 h-7 text-[#FFD700]" />
               </div>
               <h3 className="text-xl font-bold text-white mb-3">3. Ingresos Pasivos</h3>
@@ -636,8 +676,8 @@ function RegisterView({ navigateTo }) {
   return (
     <div className="min-h-[80vh] px-4 py-8 md:py-12 animate-fade-in">
       <div className="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-6 items-start">
-        <div className="bg-gray-800 border border-gray-700 rounded-3xl shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-gray-900 via-gray-900 to-[#1f2937] px-5 py-6 md:px-8 border-b border-gray-700">
+        <div className="bg-[#111216] border border-[#26262d] rounded-[32px] shadow-[0_40px_80px_rgba(0,0,0,0.45)] overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0f1014] via-[#111216] to-[#18181f] px-5 py-6 md:px-8 border-b border-[#27272f]">
             <div className="flex flex-col gap-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -665,7 +705,7 @@ function RegisterView({ navigateTo }) {
                   const active = step >= index + 1;
                   const Icon = item.icon;
                   return (
-                    <div key={item.title} className={`rounded-2xl border p-4 ${active ? 'border-[#FFD700]/40 bg-[#FFD700]/10' : 'border-gray-700 bg-gray-900/60'}`}>
+                    <div key={item.title} className={`rounded-[24px] border p-4 ${active ? 'border-[#FFD700]/40 bg-[#2d2500]/30' : 'border-[#2a2a31] bg-[#0e0f13]'}`}>
                       <div className="flex items-center gap-3">
                         <div className={`h-10 w-10 rounded-full flex items-center justify-center ${active ? 'bg-[#FFD700] text-gray-900' : 'bg-gray-700 text-gray-300'}`}>
                           <Icon className="w-5 h-5" />
@@ -687,7 +727,7 @@ function RegisterView({ navigateTo }) {
               <div className="animate-fade-in">
                 <h3 className="text-xl font-bold text-white mb-2 flex items-center"><User className="mr-2 text-[#FFD700]" /> Datos personales y contacto</h3>
                 <p className="text-gray-400 text-sm mb-6">Validamos esta información para enviarte el link de pago y confirmar tu activación.</p>
-                <div className="space-y-5">
+              <div className="space-y-5">
                   {renderField({
                     name: 'nombreCompleto',
                     label: fieldLabels.nombreCompleto,
@@ -823,7 +863,7 @@ function RegisterView({ navigateTo }) {
         </div>
 
         <aside className="space-y-6 xl:sticky xl:top-24">
-          <div className="rounded-3xl border border-gray-700 bg-gray-900/80 p-6 shadow-xl">
+          <div className="rounded-[30px] border border-[#26262d] bg-[#111216] p-6 shadow-xl">
             <h3 className="text-lg font-bold text-white">Consejos rápidos para completar el registro</h3>
             <ul className="mt-4 space-y-4 text-sm text-gray-300">
               <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-green-400 mt-0.5" /> Revisa que tu nombre esté completo y sin abreviaturas.</li>
@@ -833,7 +873,7 @@ function RegisterView({ navigateTo }) {
             </ul>
           </div>
 
-          <div className="rounded-3xl border border-[#FFD700]/20 bg-[#FFD700]/10 p-6">
+          <div className="rounded-[30px] border border-[#3b3200] bg-[#1b1704] p-6">
             <h3 className="text-lg font-bold text-white">Antes de contactar soporte</h3>
             <div className="mt-4 space-y-3">
               {faqItems.map((item) => (
