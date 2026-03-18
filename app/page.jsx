@@ -1,5 +1,5 @@
-import TadLandingApp from '../components/TadLanding';
+import DriverLandingPage from '../components/driver-landing/DriverLandingPage';
 
 export default function Page() {
-  return <TadLandingApp />;
+  return <DriverLandingPage />;
 }
