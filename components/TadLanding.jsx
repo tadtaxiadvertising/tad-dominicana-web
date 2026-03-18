@@ -43,19 +43,43 @@ const styles = `
 const faqItems = [
   {
     question: '¿Cuánto cuesta afiliarme a TAD?',
-    answer: 'La suscripción a la plataforma tiene un costo anual de RD$6,000.',
+    answer: 'Entrar a TAD cuesta RD$6,000 al año. Ese pago te deja activo en la plataforma.',
   },
   {
-    question: '¿Cuánto dinero gano por usar la tablet?',
-    answer: 'Generas ingresos mediante pagos mensuales de RD$500 por cada anuncio activo en tu pantalla.',
+    question: '¿Cuánto dinero gano por usar la pantalla?',
+    answer: 'Ganas RD$500 al mes por cada anuncio activo que se muestre en tu pantalla.',
   },
   {
     question: '¿Qué pasa si entro a un túnel o pierdo la señal de internet?',
-    answer: 'No te preocupes. Los videos se descargan localmente en la tablet y continúan reproduciendo offline sin consumir tus datos.',
+    answer: 'No pasa nada. Los videos quedan guardados en la pantalla y siguen reproduciéndose aunque no haya internet.',
   },
   {
-    question: '¿Cómo activo mi tablet después de registrarme?',
-    answer: 'Una vez llenes el formulario y pagues tu suscripción, nuestro sistema validará el pago y un administrador activará tu dispositivo de forma remota.',
+    question: '¿Cómo activo mi pantalla después de registrarme?',
+    answer: 'Llenas el formulario, haces el pago y luego un administrador activa tu pantalla de forma remota.',
+  },
+  {
+    question: '¿En cuánto tiempo me activan?',
+    answer: 'Normalmente te activamos después de confirmar tu pago. Si pagaste y no te escribimos, nos contactas por WhatsApp.',
+  },
+  {
+    question: '¿Necesito tener internet todo el tiempo?',
+    answer: 'No todo el tiempo. La pantalla puede seguir mostrando contenido guardado aunque por un momento se vaya la señal.',
+  },
+  {
+    question: '¿Puedo trabajar con Uber, DiDi, inDrive o en una base?',
+    answer: 'Sí. Puedes usar TAD mientras trabajas en apps o en una base de taxi.',
+  },
+  {
+    question: '¿Qué pasa si escribo mal mis datos?',
+    answer: 'Por eso el formulario te va avisando abajo de cada campo. Si ves un mensaje, corrígelo antes de seguir.',
+  },
+  {
+    question: '¿Qué recibo después de pagar?',
+    answer: 'Recibes confirmación del pago y tu proceso pasa a activación para dejar tu pantalla lista para trabajar.',
+  },
+  {
+    question: '¿Cómo sé si mi WhatsApp está correcto?',
+    answer: 'Usa un número que sí tengas activo en WhatsApp, porque por ahí te llegará el link de pago y los mensajes de activación.',
   },
 ];
 
@@ -72,7 +96,7 @@ const activationSteps = [
   },
   {
     title: 'Paso 3',
-    text: 'Un administrador te activará remotamente.',
+    text: 'Un administrador activará tu pantalla.',
     icon: BadgeCheck,
   },
 ];
@@ -166,7 +190,7 @@ function ProgressTracker() {
             <h2 className="text-2xl md:text-3xl font-bold text-white mt-2">Proceso simple para estar online en TAD</h2>
           </div>
           <p className="text-sm md:text-base text-gray-400 max-w-xl">
-            Diseñado para choferes que se registran desde el celular, con claridad en cada paso antes del pago y la activación.
+            Diseñado para que cualquier chofer lo entienda rápido desde su celular, antes del pago y la activación.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
@@ -204,11 +228,11 @@ function FAQSection() {
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#FFD400]/20 bg-[#FFD400]/10 px-4 py-2 text-sm text-[#FFD400]">
             <HelpCircle className="w-4 h-4" />
-            Preguntas frecuentes para choferes
+            Respuestas rápidas para choferes
           </div>
-          <h2 className="mt-4 text-3xl font-bold text-white">Aclara tus dudas antes de escribir a soporte</h2>
+          <h2 className="mt-4 text-3xl font-bold text-white">Aclara tus dudas antes de escribirnos</h2>
           <p className="mt-3 text-gray-400">
-            Respuestas directas sobre afiliación, pagos, conectividad y activación de tu tablet.
+            Respuestas simples sobre pagos, internet, activación y uso de tu pantalla.
           </p>
         </div>
 
@@ -349,14 +373,14 @@ function LandingView({ navigateTo }) {
             <div className="text-center xl:text-left">
               <div className="inline-flex items-center gap-3 rounded-full border border-[#2e2e36] bg-[#141419] px-4 py-2 text-xs font-semibold uppercase tracking-[0.32em] text-gray-400">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#FFD400] shadow-[0_0_16px_rgba(255,215,0,0.85)]" />
-                Plataforma TAD Driver Node
+                Plataforma TAD para Choferes
               </div>
               <h1 className="mt-6 text-4xl md:text-6xl font-black italic uppercase leading-[0.95] tracking-tight text-white">
                 Tu Vehículo,<br/>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ffffff] via-[#FFD400] to-[#FFD400]">Tu Valla Digital</span>
               </h1>
               <p className="mt-5 text-lg md:text-xl text-gray-400 max-w-2xl xl:max-w-xl mx-auto xl:mx-0 mb-10">
-            Gana dinero extra mientras conduces. Instalamos tablets de 10" para entretener a tus pasajeros y generar ingresos por publicidad. El ecosistema más rentable para choferes en RD.
+            Gana dinero extra mientras trabajas. Instalamos una pantalla de 10&quot; en tu vehículo para mostrar anuncios y ayudarte a generar más ingresos.
               </p>
               <div className="flex flex-col sm:flex-row justify-center xl:justify-start items-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <button onClick={() => navigateTo('register')} className="w-full sm:w-auto bg-[#FFD400] text-gray-900 px-8 py-4 rounded-[24px] font-black text-sm uppercase tracking-[0.2em] hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,215,0,0.35)] flex items-center justify-center">
@@ -371,7 +395,7 @@ function LandingView({ navigateTo }) {
               <div className="flex items-center justify-between gap-4 border-b border-white/5 pb-5">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.3em] text-zinc-500">Estado del sistema</p>
-                  <h3 className="mt-2 text-3xl font-black italic uppercase text-white">Driver Telemetry</h3>
+                  <h3 className="mt-2 text-3xl font-black italic uppercase text-white">Pantalla TAD</h3>
                 </div>
                 <div className="rounded-2xl bg-[#FFD400] p-4 shadow-[0_0_24px_rgba(255,215,0,0.35)]">
                   <Smartphone className="w-8 h-8 text-gray-900" />
@@ -404,7 +428,7 @@ function LandingView({ navigateTo }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-white">El Modelo de Negocio</h2>
-            <p className="mt-4 text-gray-400">Transparente, rentable y diseñado para tu beneficio.</p>
+            <p className="mt-4 text-gray-400">Fácil de entender, fácil de activar y pensado para que ganes más.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div className="bg-[#131318] p-8 rounded-[30px] border border-[#25252d] hover:border-[#FFD400]/40 transition-all hover:-translate-y-2">
@@ -413,7 +437,7 @@ function LandingView({ navigateTo }) {
               </div>
               <h3 className="text-xl font-bold text-white mb-3">1. Suscripción Anual</h3>
               <p className="text-gray-400">
-                Inversión única de <span className="text-[#FFD400] font-bold">RD$6,000</span>. Cubre tu Kit Tecnológico (Tablet 10", Soporte, Cargador) y mantenimiento por 12 meses.
+                Pago anual de <span className="text-[#FFD400] font-bold">RD$6,000</span>. Incluye tu pantalla de 10&quot;, soporte, cargador y mantenimiento por 12 meses.
               </p>
             </div>
             <div className="bg-[#131318] p-8 rounded-[30px] border border-[#25252d] hover:border-[#FFD400]/40 transition-all hover:-translate-y-2 delay-100">
@@ -422,7 +446,7 @@ function LandingView({ navigateTo }) {
               </div>
               <h3 className="text-xl font-bold text-white mb-3">2. Instalación Pro</h3>
               <p className="text-gray-400">
-                Técnico a domicilio o en punto de encuentro. Instalación rápida, sin cables a la vista y lista para operar con FullyKiosk.
+                Te ayudamos a dejar la pantalla instalada y lista para trabajar de forma rápida y segura.
               </p>
             </div>
             <div className="bg-[#131318] p-8 rounded-[30px] border border-[#25252d] hover:border-[#FFD400]/40 transition-all hover:-translate-y-2 delay-200">
@@ -431,7 +455,7 @@ function LandingView({ navigateTo }) {
               </div>
               <h3 className="text-xl font-bold text-white mb-3">3. Ingresos Pasivos</h3>
               <p className="text-gray-400">
-                Ganas por cada anuncio que se reproduce en tu vehículo y comisiones infinitas por referir marcas.
+                Ganas por cada anuncio que salga en tu vehículo y también puedes ganar más si refieres negocios.
               </p>
             </div>
           </div>
@@ -458,7 +482,7 @@ function LandingView({ navigateTo }) {
               <p className="text-sm uppercase tracking-[0.2em] text-[#FFD400] font-semibold">Registro guiado</p>
               <h3 className="text-2xl font-bold text-white mt-2">Evita errores antes de enviar tus datos</h3>
               <p className="text-gray-300 mt-2 max-w-2xl">
-                El formulario ahora incluye ejemplos, validaciones en tiempo real y avisos claros para que completes el pago sin fricciones.
+                El formulario ahora te guía paso a paso con ejemplos claros para que no te confundas ni pierdas tiempo.
               </p>
             </div>
             <button onClick={() => navigateTo('register')} className="w-full md:w-auto bg-[#FFD400] text-gray-900 px-6 py-4 rounded-2xl font-bold hover:bg-yellow-400 transition-all shadow-[0_0_20px_rgba(255,215,0,0.2)]">
@@ -684,7 +708,7 @@ function RegisterView({ navigateTo }) {
                   <p className="text-sm uppercase tracking-[0.2em] text-[#FFD400] font-semibold">Registro de choferes</p>
                   <h2 className="text-2xl md:text-3xl font-bold text-white mt-2">Completa tu afiliación sin errores</h2>
                   <p className="text-gray-400 mt-2 max-w-2xl">
-                    Usa los ejemplos y avisos debajo de cada campo para avanzar rápido desde tu celular y recibir tu enlace de pago por WhatsApp.
+                    Sigue los ejemplos debajo de cada campo para llenar todo bien desde tu celular y recibir tu enlace de pago por WhatsApp.
                   </p>
                 </div>
                 <button onClick={() => navigateTo('landing')} className="hidden md:inline-flex text-sm text-gray-400 hover:text-white transition-colors">Volver</button>
@@ -726,36 +750,36 @@ function RegisterView({ navigateTo }) {
             {step === 1 && (
               <div className="animate-fade-in">
                 <h3 className="text-xl font-bold text-white mb-2 flex items-center"><User className="mr-2 text-[#FFD400]" /> Datos personales y contacto</h3>
-                <p className="text-gray-400 text-sm mb-6">Validamos esta información para enviarte el link de pago y confirmar tu activación.</p>
+                <p className="text-gray-400 text-sm mb-6">Estos datos se usan para enviarte el link de pago y dejar tu pantalla lista.</p>
               <div className="space-y-5">
                   {renderField({
                     name: 'nombreCompleto',
                     label: fieldLabels.nombreCompleto,
                     placeholder: 'Ej: Juan Pérez',
-                    helper: 'Escribe tu nombre tal como lo usas en tu base o app de taxi.',
+                    helper: 'Escribe tu nombre completo, como te conocen en tu base o en la app.',
                   })}
                   {renderField({
                     name: 'cedula',
                     label: fieldLabels.cedula,
                     placeholder: '000-0000000-0',
-                    helper: 'Usa tu cédula dominicana de 11 dígitos.',
+                    helper: 'Escribe tu cédula completa, sin inventar números.',
                   })}
                   {renderField({
                     name: 'telefono',
                     label: fieldLabels.telefono,
                     type: 'tel',
                     placeholder: '809-555-1234',
-                    helper: 'Asegúrate de colocar un número con WhatsApp activo para recibir el link de pago.',
+                    helper: 'Pon un número que sí uses en WhatsApp para recibir el link de pago.',
                   })}
                   {renderField({
                     name: 'ficha',
                     label: fieldLabels.ficha,
                     placeholder: 'Ej: 145',
-                    helper: 'Ingresa el número de ficha asignado por tu base.',
+                    helper: 'Escribe el número de ficha que te dio tu base.',
                   })}
                 </div>
                 <div className="mt-8 flex justify-end">
-                  <button onClick={nextStep} className="w-full md:w-auto bg-[#FFD400] text-gray-900 px-6 py-3 rounded-2xl font-bold hover:bg-yellow-400 transition-colors">Continuar con datos del vehículo</button>
+                  <button onClick={nextStep} className="w-full md:w-auto bg-[#FFD400] text-gray-900 px-6 py-3 rounded-2xl font-bold hover:bg-yellow-400 transition-colors">Seguir con datos del vehículo</button>
                 </div>
               </div>
             )}
@@ -763,26 +787,26 @@ function RegisterView({ navigateTo }) {
             {step === 2 && (
               <div className="animate-fade-in">
                 <h3 className="text-xl font-bold text-white mb-2 flex items-center"><Car className="mr-2 text-[#FFD400]" /> Datos del vehículo</h3>
-                <p className="text-gray-400 text-sm mb-6">Completa la información del carro para validar compatibilidad y activar la tablet correctamente.</p>
+                <p className="text-gray-400 text-sm mb-6">Completa los datos del carro para dejar tu pantalla configurada correctamente.</p>
                 <div className="space-y-5">
                   {renderField({
                     name: 'marca',
                     label: fieldLabels.marca,
                     placeholder: 'Ej: Hyundai Sonata Y20',
-                    helper: 'Incluye marca y modelo para identificar tu unidad.',
+                    helper: 'Pon la marca y el modelo para identificar tu vehículo.',
                   })}
                   {renderField({
                     name: 'ano',
                     label: fieldLabels.ano,
                     type: 'text',
                     placeholder: 'Ej: 2015',
-                    helper: 'Indica el año de fabricación del vehículo.',
+                    helper: 'Escribe el año del vehículo.',
                   })}
                   {renderField({
                     name: 'placa',
                     label: fieldLabels.placa,
                     placeholder: 'Ej: A123456',
-                    helper: 'Debe empezar con una letra seguida de 6 números.',
+                    helper: 'La placa debe llevar 1 letra y luego 6 números.',
                   })}
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">{fieldLabels.aplicacion}</label>
@@ -798,12 +822,12 @@ function RegisterView({ navigateTo }) {
                       <option value="indrive">inDrive</option>
                       <option value="privado">Taxi Privado / Base</option>
                     </select>
-                    <p className="mt-2 text-sm text-zinc-500">Selecciona la modalidad con la que trabajas la mayor parte del tiempo.</p>
+                    <p className="mt-2 text-sm text-zinc-500">Elige cómo trabajas casi siempre.</p>
                   </div>
                 </div>
                 <div className="mt-8 flex flex-col-reverse md:flex-row md:justify-between gap-3">
                   <button onClick={prevStep} className="text-gray-400 hover:text-white px-4 py-2 font-medium">Atrás</button>
-                  <button onClick={nextStep} className="w-full md:w-auto bg-[#FFD400] text-gray-900 px-6 py-3 rounded-2xl font-bold hover:bg-yellow-400 transition-colors">Revisar y confirmar</button>
+                  <button onClick={nextStep} className="w-full md:w-auto bg-[#FFD400] text-gray-900 px-6 py-3 rounded-2xl font-bold hover:bg-yellow-400 transition-colors">Revisar antes de pagar</button>
                 </div>
               </div>
             )}
@@ -811,7 +835,7 @@ function RegisterView({ navigateTo }) {
             {step === 3 && (
               <div className="animate-fade-in">
                 <h3 className="text-xl font-bold text-white mb-2 flex items-center"><FileText className="mr-2 text-[#FFD400]" /> Confirmación y contrato</h3>
-                <p className="text-gray-400 text-sm mb-6">Revisa tu resumen, acepta los términos y te enviaremos a WhatsApp para completar el pago.</p>
+                <p className="text-gray-400 text-sm mb-6">Revisa tu resumen, acepta los términos y te mandaremos a WhatsApp para completar el pago.</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   {Object.entries(formData).map(([key, value]) => (
@@ -825,7 +849,7 @@ function RegisterView({ navigateTo }) {
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-[#FFD400] mt-0.5" />
                   <p className="text-sm text-white">
-                    Al confirmar, recibirás por WhatsApp el enlace para pagar tu suscripción anual de <strong>RD$6,000</strong>. Luego un administrador activará tu tablet de forma remota.
+                    Al confirmar, te llegará por WhatsApp el enlace para pagar tu suscripción anual de <strong>RD$6,000</strong>. Después activamos tu pantalla de forma remota.
                   </p>
                 </div>
 
@@ -844,9 +868,9 @@ function RegisterView({ navigateTo }) {
                   </div>
                   <div className="ml-3 text-sm">
                     <label htmlFor="terms" className="font-medium text-white cursor-pointer">
-                      Acepto términos de colaboración mercantil no-laboral.
+                      Acepto los términos de colaboración.
                     </label>
-                    <p className="text-zinc-500">Reconozco que este registro guardará mis datos y me redirigirá para el pago.</p>
+                    <p className="text-zinc-500">Entiendo que este registro guardará mis datos y me llevará al pago.</p>
                     {submissionAttempted && !agreed && <p className="text-[#FFD400] mt-2">Debes aceptar los términos para continuar.</p>}
                   </div>
                 </div>
@@ -854,7 +878,7 @@ function RegisterView({ navigateTo }) {
                 <div className="flex flex-col-reverse md:flex-row md:justify-between gap-3">
                   <button onClick={prevStep} disabled={isSubmitting} className="text-gray-400 hover:text-white px-4 py-2 font-medium disabled:opacity-50">Atrás</button>
                   <button onClick={handleComplete} disabled={isSubmitting} className="w-full md:w-auto px-6 py-3 rounded-2xl font-bold flex items-center justify-center transition-all bg-[#FFD400] text-gray-900 hover:bg-yellow-400 hover:scale-[1.01] shadow-[0_0_15px_rgba(255,215,0,0.3)] disabled:opacity-60 disabled:hover:scale-100">
-                    {isSubmitting ? 'Guardando datos...' : 'Confirmar y recibir link de pago'} {!isSubmitting && <ChevronRight className="ml-2 w-5 h-5" />}
+                    {isSubmitting ? 'Guardando datos...' : 'Confirmar y recibir pago'} {!isSubmitting && <ChevronRight className="ml-2 w-5 h-5" />}
                   </button>
                 </div>
               </div>
@@ -864,17 +888,17 @@ function RegisterView({ navigateTo }) {
 
         <aside className="space-y-6 xl:sticky xl:top-24">
           <div className="rounded-[30px] border border-[#26262d] bg-[#111216] p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-white">Consejos rápidos para completar el registro</h3>
+            <h3 className="text-lg font-bold text-white">Consejos rápidos para llenar el registro</h3>
             <ul className="mt-4 space-y-4 text-sm text-gray-300">
-              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-[#FFD400] mt-0.5" /> Revisa que tu nombre esté completo y sin abreviaturas.</li>
-              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-[#FFD400] mt-0.5" /> Usa un WhatsApp activo porque por ahí recibirás el enlace de pago.</li>
-              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-[#FFD400] mt-0.5" /> Escribe la placa exactamente como aparece en tu vehículo: 1 letra + 6 números.</li>
-              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-[#FFD400] mt-0.5" /> Ten a mano tu número de ficha asignado por la base.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-[#FFD400] mt-0.5" /> Escribe tu nombre completo, sin apodos.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-[#FFD400] mt-0.5" /> Usa un WhatsApp activo porque por ahí te escribiremos.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-[#FFD400] mt-0.5" /> Copia la placa tal como está: 1 letra y 6 números.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-[#FFD400] mt-0.5" /> Ten cerca tu número de ficha para no detenerte.</li>
             </ul>
           </div>
 
           <div className="rounded-[30px] border border-[#3b3200] bg-[#1b1704] p-6">
-            <h3 className="text-lg font-bold text-white">Antes de contactar soporte</h3>
+            <h3 className="text-lg font-bold text-white">Lee esto antes de escribirnos</h3>
             <div className="mt-4 space-y-3">
               {faqItems.map((item) => (
                 <div key={item.question} className="rounded-2xl bg-black/20 border border-white/5 p-4">
