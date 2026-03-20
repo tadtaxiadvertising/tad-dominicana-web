@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Play, ChevronRight, Monitor, Wrench, DollarSign, CheckCircle2, AlertCircle, LogOut, User, Car, FileText, Share2, TrendingUp, Smartphone, ShieldCheck, Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Play, ChevronRight, Monitor, Wrench, DollarSign, CheckCircle2, AlertCircle, LogOut, User, Car, FileText, Share2, TrendingUp, Smartphone, ShieldCheck, Menu, X, ArrowRight, BadgeDollarSign } from 'lucide-react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 
 // --- CUSTOM CSS FOR ANIMATIONS ---
@@ -8,7 +8,15 @@ const styles = `
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  @keyframes marqueeUp {
+    0%, 18% { transform: translateY(0); }
+    25%, 43% { transform: translateY(-25%); }
+    50%, 68% { transform: translateY(-50%); }
+    75%, 93% { transform: translateY(-75%); }
+    100% { transform: translateY(0); }
+  }
   .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+  .animate-marquee-up { animation: marqueeUp 14s ease-in-out infinite; }
   .delay-100 { animation-delay: 100ms; }
   .delay-200 { animation-delay: 200ms; }
   .delay-300 { animation-delay: 300ms; }
@@ -127,23 +135,92 @@ export default function App() {
 
 // --- LANDING VIEW ---
 function LandingView({ navigateTo }) {
+  const screenMessages = [
+    'Tu marca frente a pasajeros reales todos los días.',
+    'Contenido + anuncios dinámicos en una pantalla TAD dentro del vehículo.',
+    'El chofer gana RD$500 por cada anunciante activo referido.',
+    'Activa campañas mensuales y genera ingresos pasivos desde tu carro.'
+  ];
+
   return (
     <div className="animate-fade-in">
       {/* HERO SECTION */}
       <section className="relative py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#FFD700]/5 to-transparent"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-            Tu Vehículo,<br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-yellow-200"> Tu Propia Valla Digital. </span>
-          </h1>
-          <p className="mt-4 text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-            Gana dinero extra mientras conduces. Instalamos tablets de 10" para entretener a tus pasajeros y generar ingresos por publicidad. El ecosistema más rentable para choferes en RD.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <button onClick={() => navigateTo('register')} className="w-full sm:w-auto bg-[#FFD700] text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,215,0,0.4)] flex items-center justify-center">
-              Comenzar a Ganar <ChevronRight className="ml-2 w-5 h-5" />
-            </button>
+        <div className="absolute left-1/2 top-12 h-80 w-80 -translate-x-1/2 rounded-full bg-[#FFD700]/10 blur-3xl"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#FFD700]/30 bg-[#FFD700]/10 px-4 py-2 text-xs font-black uppercase tracking-[0.35em] text-[#FFD700]">
+                <Monitor className="h-4 w-4" />
+                Plataforma TAD para choferes
+              </div>
+              <h1 className="mt-8 text-4xl font-extrabold tracking-tight text-white md:text-6xl">
+                Convierte tu vehículo en una <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] to-yellow-200">pantalla publicitaria</span> que te paga cada mes.
+              </h1>
+              <p className="mt-6 text-lg leading-8 text-gray-300 md:text-xl">
+                Instala la pantalla TAD, muestra contenido atractivo a tus pasajeros y gana por anuncios activos o por cada anunciante que cierres por tu cuenta.
+              </p>
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                <button onClick={() => navigateTo('register')} className="w-full sm:w-auto bg-[#FFD700] text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-400 hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,215,0,0.4)] flex items-center justify-center">
+                  Quiero mi pantalla ahora <ChevronRight className="ml-2 w-5 h-5" />
+                </button>
+                <a href="#ganancias" className="w-full sm:w-auto border border-gray-700 bg-gray-800/50 px-8 py-4 rounded-full font-bold text-lg text-white hover:border-[#FFD700]/50 hover:text-[#FFD700] transition-all flex items-center justify-center">
+                  Ver calculadora
+                </a>
+              </div>
+              <div className="mt-8 flex flex-wrap gap-3 text-xs font-bold uppercase tracking-[0.25em] text-gray-300">
+                <span className="rounded-full border border-gray-700 bg-gray-900/70 px-4 py-2">Registro simple</span>
+                <span className="rounded-full border border-gray-700 bg-gray-900/70 px-4 py-2">Pago por WhatsApp</span>
+                <span className="rounded-full border border-gray-700 bg-gray-900/70 px-4 py-2">Activación remota</span>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="rounded-[2rem] border border-gray-700 bg-[#121722] p-5 shadow-[0_30px_120px_rgba(0,0,0,0.45)]">
+                <div className="rounded-[1.75rem] border border-gray-700/70 bg-[#0b0f18] p-5">
+                  <div className="mb-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.35em] text-gray-500">Estado del sistema</p>
+                      <h3 className="mt-2 text-3xl font-black text-white">Pantalla TAD</h3>
+                    </div>
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFD700] text-gray-900 shadow-[0_0_25px_rgba(255,215,0,0.35)]">
+                      <Monitor className="h-8 w-8" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2 rounded-3xl border border-gray-700 bg-gradient-to-br from-gray-900 to-[#101826] p-4">
+                      <div className="mb-4 flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-500">Pantalla literal</p>
+                          <p className="mt-2 text-lg font-bold text-white">Contenido deslizante para tus pasajeros</p>
+                        </div>
+                        <Play className="h-5 w-5 text-[#FFD700]" />
+                      </div>
+                      <div className="relative h-36 overflow-hidden rounded-2xl border border-[#FFD700]/20 bg-black px-4 py-3">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,215,0,0.16),transparent_55%)]"></div>
+                        <div className="relative h-full overflow-hidden">
+                          <div className="animate-marquee-up space-y-5">
+                            {screenMessages.concat(screenMessages[0]).map((message, index) => (
+                              <div key={`${message}-${index}`} className="flex h-8 items-center justify-between rounded-xl border border-white/5 bg-white/[0.03] px-3 text-sm text-gray-200">
+                                <span className="max-w-[82%] leading-tight">{message}</span>
+                                <ArrowRight className="h-4 w-4 flex-shrink-0 text-[#FFD700]" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <MetricCard label="Inversión anual" value="RD$6,000" />
+                    <MetricCard label="Pago por anunciante" value="RD$500/mes" />
+                    <MetricCard label="Máximo mensual" value="RD$7,500" />
+                    <MetricCard label="Pago" value="Transferencia" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -180,7 +257,7 @@ function LandingView({ navigateTo }) {
               </div>
               <h3 className="text-xl font-bold text-white mb-3">3. Ingresos Pasivos</h3>
               <p className="text-gray-400">
-                Ganas por cada anuncio que se reproduce en tu vehículo y comisiones infinitas por referir marcas.
+                Ganas RD$500 por cada anuncio activo dentro de tu vehículo y RD$500 mensuales por cada anunciante que refieras y quede pautando.
               </p>
             </div>
           </div>
@@ -189,13 +266,14 @@ function LandingView({ navigateTo }) {
 
       {/* CALCULATOR SECTION */}
       <section id="ganancias" className="py-20 bg-[#111827]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 border border-gray-700 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
               <DollarSign className="w-64 h-64 text-[#FFD700]" />
             </div>
-            <h2 className="text-3xl font-bold text-white mb-2 relative z-10">Calculadora de Ganancias</h2>
-            <p className="text-gray-400 mb-8 relative z-10">Simula tus ingresos mensuales. (Máximo 15 anuncios simultáneos por vehículo).</p>
+            <p className="relative z-10 text-xs font-black uppercase tracking-[0.35em] text-[#FFD700]">Calculadora táctil</p>
+            <h2 className="mt-4 text-3xl font-bold text-white mb-2 relative z-10">Calcula cuánto puedes ganar</h2>
+            <p className="text-gray-400 mb-8 relative z-10">Mueve el control y suma tus anunciantes propios. Cada anunciante referido te paga RD$500 al mes mientras permanezca activo.</p>
             <Calculator />
           </div>
         </div>
@@ -204,52 +282,96 @@ function LandingView({ navigateTo }) {
   );
 }
 
+function MetricCard({ label, value }) {
+  return (
+    <div className="rounded-[1.5rem] border border-gray-700 bg-[#0c111b] p-5">
+      <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-500">{label}</p>
+      <p className="mt-4 text-2xl font-black text-white">{value}</p>
+    </div>
+  );
+}
+
 // --- CALCULATOR COMPONENT ---
 function Calculator() {
   const [ads, setAds] = useState(4);
-  const [sales, setSales] = useState(0);
+  const [advertisers, setAdvertisers] = useState(0);
+
   const incomePerAd = 500;
-  const commissionPerSale = 500;
+  const commissionPerAdvertiser = 500;
   const subscriptionCost = 6000;
-  const totalIncome = (ads * incomePerAd) + (sales * commissionPerSale);
+
+  const monthlyScreenIncome = ads * incomePerAd;
+  const monthlyCommissionIncome = advertisers * commissionPerAdvertiser;
+  const totalIncome = monthlyScreenIncome + monthlyCommissionIncome;
   const roiMonths = totalIncome > 0 ? Math.ceil(subscriptionCost / totalIncome) : '---';
 
+  const summaryText = useMemo(() => {
+    const base = `Si tienes ${ads} anuncio${ads === 1 ? '' : 's'} activo${ads === 1 ? '' : 's'}, ganas RD$${monthlyScreenIncome.toLocaleString()} al mes por pantalla.`;
+    if (advertisers === 0) return base;
+    return `${base} Más RD$${monthlyCommissionIncome.toLocaleString()} en comisiones por ${advertisers} anunciante${advertisers === 1 ? '' : 's'} referido${advertisers === 1 ? '' : 's'}.`;
+  }, [ads, advertisers, monthlyScreenIncome, monthlyCommissionIncome]);
+
   return (
-    <div className="space-y-8 relative z-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-4">
-          <label className="flex justify-between text-sm font-medium text-gray-300">
-            <span>Anuncios Activos (RD$500 c/u)</span>
-            <span className="text-[#FFD700] font-bold">{ads}</span>
-          </label>
-          <input type="range" min="0" max="15" value={ads} onChange={(e) => setAds(Number(e.target.value))} className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#FFD700]" />
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>0</span>
-            <span>Máx 15</span>
+    <div className="relative z-10 space-y-8">
+      <div className="rounded-[2rem] border border-gray-700 bg-[#0c111b] p-6 md:p-8">
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xl font-bold text-white">Anuncios activos</p>
+            <p className="mt-2 text-sm text-gray-400">RD$500 mensuales por cada anuncio mostrado en tu pantalla.</p>
+          </div>
+          <div className="flex h-12 min-w-12 items-center justify-center rounded-full bg-[#FFD700]/15 px-4 text-lg font-black text-[#FFD700]">
+            {ads}
           </div>
         </div>
-        <div className="space-y-4">
-          <label className="flex justify-between text-sm font-medium text-gray-300">
-            <span>Ventas Propias (RD$500 c/u)</span>
-            <span className="text-[#FFD700] font-bold">{sales}</span>
-          </label>
-          <input type="number" min="0" value={sales} onChange={(e) => setSales(Math.max(0, Number(e.target.value)))} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#FFD700] transition-colors" placeholder="Ej: 2" />
-          <p className="text-xs text-gray-500">Comisiones ilimitadas si tú traes al cliente.</p>
+
+        <input type="range" min="0" max="15" value={ads} onChange={(e) => setAds(Number(e.target.value))} className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#FFD700]" />
+
+        <div className="mt-4 flex justify-between text-xs font-black uppercase tracking-[0.25em] text-gray-500">
+          <span>0</span>
+          <span>Máximo 15</span>
+        </div>
+
+        <p className="mt-6 text-lg font-bold text-white">{summaryText}</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-[2rem] border border-gray-700 bg-[#0c111b] p-6 md:p-8">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFD700]/15 text-[#FFD700]">
+              <BadgeDollarSign className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-xl font-bold text-white">Comisión por anunciante</p>
+              <p className="text-sm text-gray-400">RD$500 por cada anunciante que cierres y se mantenga activo.</p>
+            </div>
+          </div>
+
+          <label className="mb-3 block text-sm font-medium text-gray-300">¿Cuántos anunciantes propios vas a manejar?</label>
+          <input type="number" min="0" value={advertisers} onChange={(e) => setAdvertisers(Math.max(0, Number(e.target.value) || 0))} className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700] transition-colors" placeholder="Ej: 3" />
+          <p className="mt-3 text-sm text-gray-500">Puedes sumar todos los negocios o marcas que tú mismo refieras a TAD.</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4">
+          <div className="rounded-[1.75rem] border border-gray-700 bg-[#0c111b] p-6">
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-500">Ganancia mensual</p>
+            <p className="mt-4 text-4xl font-black text-[#FFD700]">RD$ {totalIncome.toLocaleString()}</p>
+            <div className="mt-4 space-y-2 text-sm text-gray-400">
+              <div className="flex items-center justify-between"><span>Pantalla</span><span className="font-bold text-white">RD$ {monthlyScreenIncome.toLocaleString()}</span></div>
+              <div className="flex items-center justify-between"><span>Comisiones</span><span className="font-bold text-white">RD$ {monthlyCommissionIncome.toLocaleString()}</span></div>
+            </div>
+          </div>
+
+          <div className="rounded-[1.75rem] border border-gray-700 bg-[#0c111b] p-6">
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-gray-500">Retorno de inversión</p>
+            <p className="mt-4 text-3xl font-black text-white">{roiMonths === '---' ? '---' : `En ${roiMonths} mes${roiMonths > 1 ? 'es' : ''}`}</p>
+            <p className="mt-3 text-sm text-gray-400">Basado en una inversión anual de RD$6,000 para instalar la pantalla TAD.</p>
+          </div>
         </div>
       </div>
-      <div className="bg-gray-900/80 rounded-2xl p-6 border border-gray-700/50 flex flex-col md:flex-row items-center justify-between">
-        <div>
-          <p className="text-gray-400 text-sm mb-1">Ganancia Mensual Proyectada</p>
-          <p className="text-4xl font-extrabold text-[#FFD700]"> RD$ {totalIncome.toLocaleString()} </p>
-        </div>
-        <div className="mt-4 md:mt-0 text-right md:border-l border-gray-700 md:pl-8">
-          <p className="text-gray-400 text-sm mb-1">Retorno de Inversión (RD$6,000)</p>
-          <p className="text-xl font-bold text-white"> {roiMonths === '---' ? '---' : `En ${roiMonths} mes${roiMonths > 1 ? 'es' : ''}`} </p>
-        </div>
-      </div>
-      <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 flex items-start">
-        <CheckCircle2 className="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" />
-        <p className="text-sm text-green-200"> Recuperas tu inversión de suscripción rápidamente. El resto del año es 100% ganancia pura para ti. </p>
+
+      <div className="flex items-start rounded-2xl border border-green-500/20 bg-green-500/10 p-4">
+        <CheckCircle2 className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-green-400" />
+        <p className="text-sm text-green-200">Si combinas anuncios en pantalla con anunciantes propios, recuperas tu inversión más rápido y conviertes la pantalla en un ingreso recurrente todos los meses.</p>
       </div>
     </div>
   );
